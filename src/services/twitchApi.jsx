@@ -2,6 +2,7 @@ import axios from "axios";
 
 const TWITCH_API_BASE_URL = "https://api.twitch.tv/helix";
 
+/** Helix requires a valid app or user access token; app tokens expire (~60 days) — refresh via Twitch Developer console or client-credentials flow. */
 const axiosCreateTwitchApi = axios.create({
    baseURL: TWITCH_API_BASE_URL,
    headers: {

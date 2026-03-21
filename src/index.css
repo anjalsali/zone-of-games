@@ -277,6 +277,47 @@
       color: #fff;
    }
 
+   /* Numbered pagination (game-store style) */
+   .zog-pagination-btn {
+      @apply inline-flex items-center justify-center gap-1 rounded-lg border px-2 py-2 text-xs font-semibold transition-all duration-200 sm:px-3 sm:text-sm;
+      border-color: rgb(var(--color-border) / 0.65);
+      background: rgb(var(--color-secondary));
+      color: rgb(var(--color-text));
+   }
+
+   .zog-pagination-btn:hover:not(:disabled) {
+      border-color: rgb(var(--color-accent) / 0.55);
+      background: rgb(var(--color-accent) / 0.12);
+      color: rgb(var(--color-accent));
+   }
+
+   .zog-pagination-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.38;
+   }
+
+   .zog-pagination-icon {
+      @apply min-h-[2.25rem] sm:min-w-[4.5rem];
+   }
+
+   .zog-pagination-num {
+      @apply flex h-9 min-w-[2.25rem] items-center justify-center rounded-lg border border-transparent px-2 text-sm font-bold transition-colors duration-200;
+      color: rgb(var(--color-text) / 0.88);
+   }
+
+   .zog-pagination-num:hover:not(.zog-pagination-num-active) {
+      border-color: rgb(var(--color-accent) / 0.35);
+      background: rgb(var(--color-accent) / 0.1);
+      color: rgb(var(--color-accent));
+   }
+
+   .zog-pagination-num-active {
+      border-color: rgb(var(--color-accent));
+      background: rgb(var(--color-accent) / 0.18);
+      color: rgb(var(--color-accent));
+      box-shadow: 0 0 0 1px rgb(var(--color-accent) / 0.25);
+   }
+
    .zog-link-row {
       @apply block rounded-xl transition-all duration-200;
    }
