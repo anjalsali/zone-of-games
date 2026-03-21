@@ -23,7 +23,7 @@ const TopRatedGames = () => {
     return (
         <div className="flex w-full flex-col md:flex-row md:items-start">
             <aside className="browse-aside hidden w-60 max-w-[240px] shrink-0 text-text md:block md:min-h-[50vh]">
-                <div className="sticky top-[4.5rem] py-2 pr-2">
+                <div className="sticky top-14 py-2 pr-2">
                     <LinksSidebar />
                 </div>
             </aside>

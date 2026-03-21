@@ -9,7 +9,7 @@ const PageLayout = ({ children }) => {
    return (
       <div className="font-montserrat relative text-text">
          <Header />
-         <main className="relative z-0 w-full px-3 pb-12 pt-1 sm:px-4 md:px-5 animate-fade-up">
+         <main className="relative z-0 w-full pl-0 pr-3 pb-12 pt-1 sm:pr-4 md:pr-5 animate-fade-up">
             {children}
          </main>
          <Footer />
