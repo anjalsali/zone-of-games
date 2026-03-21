@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import rawgApi from "../services/rawgApi";
 import useGameGridPageSize from "../hooks/useGameGridPageSize";
 
@@ -24,8 +24,16 @@ const Home = () => {
 
    const [selectedGenreName, setSelectedGenreName] = useState("");
    const [selectedPlatformName, setSelectedPlatformName] = useState("");
+   const [gamesTotalCount, setGamesTotalCount] = useState(0);
+   const [gamesHasNextPage, setGamesHasNextPage] = useState(false);
+   const skipScrollRef = useRef(true);
 
    const gridPageSize = useGameGridPageSize();
+
+   const totalPages = useMemo(
+      () => Math.max(1, Math.ceil((gamesTotalCount || 0) / gridPageSize)),
+      [gamesTotalCount, gridPageSize]
+   );
 
    const selectRandomGames = (games, count) => {
       const n = Math.min(count, games.length);
@@ -49,6 +57,24 @@ const Home = () => {
       }
    }, [allGamesByGenreIdAndPlatformId]);
 
+   useEffect(() => {
+      setCurrentPage(1);
+   }, [selectedGenreId, selectedPlatformId]);
+
+   useEffect(() => {
+      if (currentPage > totalPages) {
+         setCurrentPage(totalPages);
+      }
+   }, [currentPage, totalPages]);
+
+   useEffect(() => {
+      if (skipScrollRef.current) {
+         skipScrollRef.current = false;
+         return;
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+   }, [currentPage]);
+
    const fetchGamesAndLists = useCallback(async () => {
       try {
          const [gamesResponse, genreListResponse, platformListResponse] = await Promise.all([
@@ -59,7 +85,10 @@ const Home = () => {
 
          // Check if the response status is okay (200)
          if (gamesResponse.status === 200 && genreListResponse.status === 200 && platformListResponse.status === 200) {
+            setError(null);
             setAllGamesByGenreIdAndPlatformId(gamesResponse.data.results);
+            setGamesTotalCount(gamesResponse.data.count ?? 0);
+            setGamesHasNextPage(Boolean(gamesResponse.data.next));
             setGenreList(genreListResponse.data.results);
             setPlatformList(platformListResponse.data.results);
 
@@ -139,8 +168,11 @@ const Home = () => {
             selectedGenreName={selectedGenreName}
             selectedPlatformName={selectedPlatformName}
             currentPage={currentPage}
-            onPrevPage={() => handlePageChange(currentPage - 1)}
-            onNextPage={() => handlePageChange(currentPage + 1)}
+            totalPages={totalPages}
+            totalCount={gamesTotalCount}
+            pageSize={gridPageSize}
+            hasNextPage={gamesHasNextPage}
+            onPageChange={handlePageChange}
          />
       </div>
    );

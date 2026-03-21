@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import Loading from "./Loading";
+import GamePagination from "./GamePagination";
 
 const GameBanner = lazy(() => import("./GameBanner"));
 const RawgGamesByGenreAndPlatformId = lazy(() =>
@@ -13,8 +14,11 @@ const MainContent = ({
   selectedGenreName,
   selectedPlatformName,
   currentPage,
-  onPrevPage,
-  onNextPage,
+  totalPages,
+  totalCount,
+  pageSize,
+  hasNextPage,
+  onPageChange,
 }) => {
   const bannerGames = Array.isArray(randomGames) ? randomGames : [];
 
@@ -32,29 +36,17 @@ const MainContent = ({
             gamesByGenreAndPlatformList={allGamesByGenreIdAndPlatformId}
             genreName={selectedGenreName}
             platformName={selectedPlatformName}
-            pageNumber={currentPage}
           />
         </Suspense>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 pb-4">
-          <button
-            type="button"
-            className="zog-btn min-w-[140px] disabled:pointer-events-none disabled:opacity-40"
-            onClick={onPrevPage}
-            disabled={currentPage === 1}
-            aria-label="Go to previous page of games"
-          >
-            Previous Page
-          </button>
-          <button
-            type="button"
-            className="zog-btn zog-btn-primary min-w-[140px]"
-            onClick={onNextPage}
-            aria-label="Go to next page of games"
-          >
-            Next Page
-          </button>
-        </div>
+        <GamePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          hasNextPage={hasNextPage}
+          onPageChange={onPageChange}
+        />
       </div>
     </div>
   );
@@ -69,8 +61,11 @@ MainContent.propTypes = {
   selectedGenreName: PropTypes.string.isRequired,
   selectedPlatformName: PropTypes.string.isRequired,
   currentPage: PropTypes.number.isRequired,
-  onPrevPage: PropTypes.func.isRequired,
-  onNextPage: PropTypes.func.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  totalCount: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  hasNextPage: PropTypes.bool.isRequired,
+  onPageChange: PropTypes.func.isRequired,
 };
 
 export default MainContent;
