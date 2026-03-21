@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ThemeContext } from "./context/ThemeContext";
 import '@fontsource/montserrat';
@@ -12,8 +12,7 @@ const App = () => {
    const [theme, setTheme] = useState(() =>
       localStorage.getItem("theme") || "dark");
 
-   const getThemeClassName = () =>
-      `${theme} ${theme === "dark" ? "bg-background" : "bg-background"}`;
+   const getThemeClassName = () => `${theme} page-shell`;
 
    // Update document root class when theme changes
    useEffect(() => {
@@ -23,7 +22,7 @@ const App = () => {
    return (
       <Router>
          <Routes>
-            {routes.map(({ path, component: Component }, index) => (
+            {routes.map(({ path, component: Component }) => (
                <Route
                   key={path}
                   path={path}

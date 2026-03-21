@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import twitchApi from "../services/twitchApi";
 
@@ -6,11 +6,9 @@ function TwitchTopGames() {
    const [twitchTopGames, setTwitchTopGames] = useState([]);
 
    useEffect(() => {
-      // Fetch top games list when component mounts
       getTwitchTopGames();
    }, []);
 
-   // Get top games list from Twitch Api
    const getTwitchTopGames = async () => {
       try {
          const response = await twitchApi.getTwitchTopGames;
@@ -21,26 +19,24 @@ function TwitchTopGames() {
       }
    };
    return (
-      <div className="p-5">
-         <h2 className="text-3xl font-bold text-gray-400 mb-4 mt-6 text-center">
-            Top Games Streaming on Twitch
-         </h2>
-         <div className="flex flex-wrap -mx-4">
-
+      <div className="pb-4 pt-1">
+         <h2 className="zog-section-title">Top Games Streaming on Twitch</h2>
+         <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {twitchTopGames.map((game) => (
-               <div key={game.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 px-4 mb-4">
-                  <div className="bg-secondary p-4 rounded-md h-full">
-
-                     {/* Stream game name */}
-                     <h3 className="text-xl font-bold text-gray-400 mb-2 overflow-ellipsis h-16">
-                        {game.name}
-                     </h3>
-
-                     {/* Stream game image */}
-                     <Link to={`/streams/${game.id}`}>
-                        <img src={game.box_art_url.replace("{width}", "300").replace("{height}", "400")} alt={game.name} className="w-full h-48 object-cover rounded-md mb-2" />
-                     </Link>
-                  </div>
+               <div
+                  key={game.id}
+                  className="group zog-card-interactive w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-14px)] lg:w-[calc(25%-16px)] xl:w-[calc(20%-16px)]"
+               >
+                  <h3 className="line-clamp-2 min-h-[3.5rem] px-4 pb-2 pt-4 text-lg font-bold text-text">
+                     {game.name}
+                  </h3>
+                  <Link to={`/streams/${game.id}`} className="block overflow-hidden px-4 pb-4">
+                     <img
+                        src={game.box_art_url.replace("{width}", "300").replace("{height}", "400")}
+                        alt={game.name}
+                        className="h-52 w-full rounded-xl object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                     />
+                  </Link>
                </div>
             ))}
          </div>

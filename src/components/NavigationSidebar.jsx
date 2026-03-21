@@ -1,106 +1,140 @@
-import React from "react";
+import PropTypes from "prop-types";
 import CollapsibleSection from "./CollapsibleSection";
 import LinksSidebar from "./LinksSidebar";
 
 const NavigationSidebar = ({
-    genreList,
-    displayedGenres,
-    genreActiveIndex,
-    onShowMore,
-    onShowLess,
-    onGenreSelect,
-    platformList,
-    displayedPlatforms,
-    platformActiveIndex,
-    onShowMorePlatforms,
-    onShowLessPlatforms,
-    onPlatformSelect,
+   genreList,
+   displayedGenres,
+   genreActiveIndex,
+   onShowMore,
+   onShowLess,
+   onGenreSelect,
+   platformList,
+   displayedPlatforms,
+   platformActiveIndex,
+   onShowMorePlatforms,
+   onShowLessPlatforms,
+   onPlatformSelect,
 }) => {
-    return (
-        <div className="bg-secondary text-text hidden md:block">
+   return (
+      <aside className="browse-aside hidden w-60 max-w-[240px] shrink-0 text-text md:block md:min-h-[50vh]">
+         <div className="sticky top-[4.5rem] py-2 pr-2">
             <LinksSidebar />
-            <div className="bg-secondary p-5 rounded-md shadow-md">
-                {/* Collapsible Genres Section */}
-                <CollapsibleSection title="Genres">
-                    {genreList.slice(0, displayedGenres).map((item, index) => (
-                        <div
-                            key={item.id}
-                            onClick={() => { onGenreSelect(item.id) }}
-                            className={
-                                `flex gap-2 items-center mb-2 mt-3 px-2 py-2 cursor-pointer hover:bg-accent hover:text-white group rounded-lg ${genreActiveIndex === item.id ? "bg-accent" : ""}`
-                            }
-                        >
-                            {/* Genre image */}
-                            <img loading="lazy" width={40} height={40}
-                                src={item.image_background}
-                                alt={`Genre ${item.name} background`}
-                                className={
-                                    `w-[40px] h-[40px] object-cover rounded-lg group-hover:scale-110 transition-all ease-out duration-300 ${genreActiveIndex === item.id ? "scale-110" : ""}`
-                                }
-                            />
-                            {/* Genre name */}
-                            <h3 className={
-                                `text-[18px] group-hover:font-bold transition-all ease-out duration-300 ${genreActiveIndex === item.id ? "font-bold text-white" : ""}`
-                            }>
-                                {item.name}
-                            </h3>
-                        </div>
-                    ))}
+            <div className="browse-divider" />
 
-                    {/* Show more/less buttons */}
-                    <div className="flex justify-between mt-4">
-                        <button onClick={onShowMore} className="bg-primary text-text px-4 py-2 rounded-md hover:bg-success hover:opacity-90 transition duration-150 ease-in-out">
-                            Show More
+            <div className="px-1">
+               <CollapsibleSection title="Browse by genre" variant="browse">
+                  <div className="border border-borderTheme bg-background/50">
+                     {genreList.slice(0, displayedGenres).map((item) => (
+                        <div
+                           key={item.id}
+                           onClick={() => {
+                              onGenreSelect(item.id);
+                           }}
+                           onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                 e.preventDefault();
+                                 onGenreSelect(item.id);
+                              }
+                           }}
+                           role="button"
+                           tabIndex={0}
+                           className={`browse-filter-row ${genreActiveIndex === item.id ? "browse-filter-row-active" : ""}`}
+                        >
+                           <img
+                              loading="lazy"
+                              width={36}
+                              height={36}
+                              src={item.image_background}
+                              alt=""
+                              className="browse-filter-thumb"
+                           />
+                           <span className="min-w-0 flex-1 text-left text-[13px] font-semibold leading-snug text-text">
+                              {item.name}
+                           </span>
+                        </div>
+                     ))}
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap gap-2 border-t border-borderTheme pt-3">
+                     <button type="button" onClick={onShowMore} className="zog-btn zog-btn-primary text-xs">
+                        Show more
+                     </button>
+                     {displayedGenres > 5 && (
+                        <button type="button" onClick={onShowLess} className="zog-btn text-xs">
+                           Show less
                         </button>
-                        {displayedGenres > 5 && (
-                            <button onClick={onShowLess} className="bg-primary text-text px-4 py-2 rounded-md hover:bg-error hover:opacity-90 transition duration-150 ease-in-out">
-                                Show Less
-                            </button>
-                        )}
-                    </div>
-                </CollapsibleSection>
+                     )}
+                  </div>
+               </CollapsibleSection>
             </div>
 
-            {/* Collapsible Platforms Section */}
-            <div className="bg-secondary p-5 rounded-md shadow-md">
-                <CollapsibleSection title="Platforms">
-                    {platformList.slice(0, displayedPlatforms).map((item, index) => (
-                        <div
-                            key={item.id}
-                            onClick={() => { onPlatformSelect(item.id); }}
-                            className={
-                                `flex gap-2 items-center mb-2 mt-3 px-2 py-2 cursor-pointer hover:bg-accent hover:text-white group rounded-lg ${platformActiveIndex === item.id ? "bg-accent" : ""}`
-                            }
-                        >
-                            <img loading="lazy" width={40} height={40}
-                                src={item.image_background}
-                                alt={`Platform ${item.name} background`}
-                                className={
-                                    `w-[40px] h-[40px] object-cover rounded-lg group-hover:scale-110 transition-all ease-out duration-300 ${platformActiveIndex === item.id ? "scale-110" : ""}`
-                                }
-                            />
-                            <h3 className={
-                                `text-[18px] group-hover:font-bold transition-all ease-out duration-300 ${platformActiveIndex === item.id ? "font-bold text-white" : ""}`
-                            }>
-                                {item.name}
-                            </h3>
-                        </div>
-                    ))}
+            <div className="browse-divider" />
 
-                    {/* Show more/less buttons */}
-                    <div className="flex justify-between mt-4">
-                        <button onClick={onShowMorePlatforms} className="bg-primary text-text px-4 py-2 rounded-md hover:bg-success hover:opacity-90 transition duration-150 ease-in-out">
-                            Show More
+            <div className="px-1">
+               <CollapsibleSection title="Browse by platform" variant="browse">
+                  <div className="border border-borderTheme bg-background/50">
+                     {platformList.slice(0, displayedPlatforms).map((item) => (
+                        <div
+                           key={item.id}
+                           onClick={() => {
+                              onPlatformSelect(item.id);
+                           }}
+                           onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                 e.preventDefault();
+                                 onPlatformSelect(item.id);
+                              }
+                           }}
+                           role="button"
+                           tabIndex={0}
+                           className={`browse-filter-row ${platformActiveIndex === item.id ? "browse-filter-row-active" : ""}`}
+                        >
+                           <img
+                              loading="lazy"
+                              width={36}
+                              height={36}
+                              src={item.image_background}
+                              alt=""
+                              className="browse-filter-thumb"
+                           />
+                           <span className="min-w-0 flex-1 text-left text-[13px] font-semibold leading-snug text-text">
+                              {item.name}
+                           </span>
+                        </div>
+                     ))}
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap gap-2 border-t border-borderTheme pt-3">
+                     <button type="button" onClick={onShowMorePlatforms} className="zog-btn zog-btn-primary text-xs">
+                        Show more
+                     </button>
+                     {displayedPlatforms > 5 && (
+                        <button type="button" onClick={onShowLessPlatforms} className="zog-btn text-xs">
+                           Show less
                         </button>
-                        {displayedPlatforms > 5 && (
-                            <button onClick={onShowLessPlatforms} className="bg-primary text-text px-4 py-2 rounded-md hover:bg-error hover:opacity-90 transition duration-150 ease-in-out">
-                                Show Less
-                            </button>
-                        )}
-                    </div>
-                </CollapsibleSection>
+                     )}
+                  </div>
+               </CollapsibleSection>
             </div>
-        </div>
-    );
+         </div>
+      </aside>
+   );
 };
+
+NavigationSidebar.propTypes = {
+   genreList: PropTypes.arrayOf(PropTypes.object).isRequired,
+   displayedGenres: PropTypes.number.isRequired,
+   genreActiveIndex: PropTypes.number.isRequired,
+   onShowMore: PropTypes.func.isRequired,
+   onShowLess: PropTypes.func.isRequired,
+   onGenreSelect: PropTypes.func.isRequired,
+   platformList: PropTypes.arrayOf(PropTypes.object).isRequired,
+   displayedPlatforms: PropTypes.number.isRequired,
+   platformActiveIndex: PropTypes.number.isRequired,
+   onShowMorePlatforms: PropTypes.func.isRequired,
+   onShowLessPlatforms: PropTypes.func.isRequired,
+   onPlatformSelect: PropTypes.func.isRequired,
+};
+
 export default NavigationSidebar;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import rawgApi from "../services/rawgApi";
 
 
@@ -33,7 +33,7 @@ const Home = () => {
 
    useEffect(() => {
       fetchGamesAndLists();
-   }, [selectedGenreId, selectedPlatformId, currentPage]);
+   }, [selectedGenreId, selectedPlatformId, currentPage]); // eslint-disable-line react-hooks/exhaustive-deps -- explicit filter/page triggers only
 
    const fetchGamesAndLists = async () => {
       try {
@@ -99,20 +99,22 @@ const Home = () => {
 
    if (error) {
       return (
-         <div className='flex flex-col items-center justify-center h-screen'>
-            <h1 className='text-4xl font-bold text-red-500 mb-4'>Error: {error}</h1>
-            <p className='text-lg text-text mb-8'>
-               <a href="/" className="hover:text-accent">
-                  Go back to homepage!
-               </a>
-            </p>
+         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 text-center">
+            <div className="zog-card max-w-md px-8 py-10">
+               <h1 className="mb-3 text-2xl font-bold text-error md:text-3xl">Error: {error}</h1>
+               <p className="text-muted">
+                  <a href="/" className="font-semibold text-accent underline-offset-4 hover:underline">
+                     Go back to homepage
+                  </a>
+               </p>
+            </div>
          </div>
       );
    }
 
    return (
-      <div className="grid grid-cols-4">
-         {/* Navigation Sidebar */}
+      <div className="flex w-full flex-col md:flex-row md:items-start">
+         {/* Navigation Sidebar — fixed store-standard width on md+ */}
          <NavigationSidebar
             genreList={genreList}
             displayedGenres={displayedGenres}

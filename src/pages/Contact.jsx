@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // Icons
 import { FaGithub, FaLinkedin } from "react-icons/fa";
@@ -9,7 +9,8 @@ import adamProfile from "../assets/images/adam-profile-pic.png";
 import mihaiProfile from "../assets/images/mihai-profile-pic.png";
 import chrisProfile from "../assets/images/chris-profile-pic.png";
 
-
+const inputClass =
+   "w-full rounded-xl border border-borderTheme/60 bg-secondary/80 px-4 py-3 text-sm text-text shadow-inner placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25";
 
 const Contact = () => {
    const profileLinks = [
@@ -74,27 +75,43 @@ const Contact = () => {
 
    return (
       <>
-         <div className="mx-auto px-4 py-8 text-center">
-            <div className="text-center">
-               <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-text">Our Team</h2>
-               <p className="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">
+         <div className="mx-auto max-w-6xl px-4 py-10 text-center sm:px-6">
+            <div className="mb-12">
+               <h2 className="mb-4 text-3xl font-black tracking-tight text-text sm:text-4xl">Our Team</h2>
+               <p className="mx-auto max-w-3xl text-lg text-muted">
                   At Zone of Games, we believe the heart of our success lies within the collective spirit, talent, and dedication of our team. Our diverse group of professionals brings together a rich
                   tapestry of expertise, backgrounds, and perspectives, united by a common passion for excellence.
                </p>
             </div>
-            <div className="flex flex-wrap justify-center grid  md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                {profileLinks.map((profile, index) => (
-                  <div key={index} className="relative overflow-hidden max-w-xs rounded-lg shadow-lg group m-5">
-                     <div className="relative">
-                        <img className="rounded-lg transition-transform group-hover:scale-125 duration-300" src={profile.imgSrc} alt="profile picture" />
-                        <div className="absolute inset-0 flex flex-col items-start justify-end p-4 bg-gradient-to-t from-black/50 to-transparent">
-                           <div className="text-3xl font-bold text-white mb-5">{profile.name}</div>
-                           <div className="flex space-x-4">
-                              <a href={profile.gitHubLink} target="_blank" rel="noopener noreferrer" className="text-white  hover:scale-150 transition duration-300 ease-in-out text-lg">
-                                 <FaGithub alt="GitHub" size={24} />
+                  <div key={index} className="group relative zog-card overflow-hidden">
+                     <div className="relative aspect-[3/4] overflow-hidden">
+                        <img
+                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                           src={profile.imgSrc}
+                           alt={`${profile.name} profile`}
+                        />
+                        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-background via-background/60 to-transparent p-5 opacity-95 transition-opacity duration-300 group-hover:opacity-100">
+                           <div className="mb-4 text-left text-xl font-bold text-text">{profile.name}</div>
+                           <div className="flex gap-4">
+                              <a
+                                 href={profile.gitHubLink}
+                                 target="_blank"
+                                 rel="noopener noreferrer"
+                                 className="rounded-lg p-2 text-accent transition-transform hover:scale-110 hover:bg-accent/10"
+                                 aria-label={`${profile.name} on GitHub`}
+                              >
+                                 <FaGithub size={22} />
                               </a>
-                              <a href={profile.linkedInLink} target="_blank" rel="noopener noreferrer" className="text-white hover:scale-150 transition duration-300 ease-in-out text-lg">
-                                 <FaLinkedin alt="LinkedIn" size={24} />
+                              <a
+                                 href={profile.linkedInLink}
+                                 target="_blank"
+                                 rel="noopener noreferrer"
+                                 className="rounded-lg p-2 text-accent transition-transform hover:scale-110 hover:bg-accent/10"
+                                 aria-label={`${profile.name} on LinkedIn`}
+                              >
+                                 <FaLinkedin size={22} />
                               </a>
                            </div>
                         </div>
@@ -104,15 +121,15 @@ const Contact = () => {
             </div>
          </div>
 
-         <section>
-            <div className="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
-               <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-center text-text">Contact Us</h2>
-               <p className="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">
+         <section className="border-t border-borderTheme/30 bg-primary/20 py-12">
+            <div className="zog-glass mx-auto max-w-lg rounded-3xl p-8 sm:p-10">
+               <h2 className="mb-3 text-center text-3xl font-black text-text">Contact Us</h2>
+               <p className="mb-8 text-center text-muted">
                   Got a technical issue? Want to send feedback about a beta feature? Need details about our Project? Let us know.
                </p>
-               <form onSubmit={handleSubmit} className="space-y-8">
+               <form onSubmit={handleSubmit} className="space-y-6 text-left">
                   <div>
-                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                     <label htmlFor="email" className="mb-2 block text-sm font-semibold text-text">
                         Email
                      </label>
                      <input
@@ -121,13 +138,13 @@ const Contact = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="shadow-sm bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light"
-                        placeholder="Enter your Email address"
+                        className={inputClass}
+                        placeholder="Enter your email address"
                         required
                      />
                   </div>
                   <div>
-                     <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                     <label htmlFor="subject" className="mb-2 block text-sm font-semibold text-text">
                         Subject
                      </label>
                      <input
@@ -136,39 +153,47 @@ const Contact = () => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
-                        className="block p-3 w-full text-sm text-gray-900 bg-gray-300 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light"
-                        placeholder="Let us know how we can help you"
+                        className={inputClass}
+                        placeholder="How can we help?"
                         required
                      />
                   </div>
-                  <div className="sm:col-span-2">
-                     <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">
+                  <div>
+                     <label htmlFor="message" className="mb-2 block text-sm font-semibold text-text">
                         Your message
                      </label>
                      <textarea
                         id="message"
                         value={formData.message}
                         onChange={handleChange}
-                        rows="6"
-                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-300 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Leave a comment..."
+                        rows={6}
+                        className={`${inputClass} resize-y`}
+                        placeholder="Leave a comment…"
                         required
-                     ></textarea>
+                     />
                   </div>
-                  <button
-                     type="submit"
-                     className="py-3 px-5 text-sm font-bold text-center bg-black text-white hover:bg-navItemColor dark:text-black dark:bg-white rounded-xl dark:hover:bg-navItemColor dark:hover:text-white"
-                  >
+                  <button type="submit" className="zog-btn-primary w-full rounded-xl py-3.5 text-sm font-bold">
                      Send Message
                   </button>
                </form>
             </div>
             {showThankYouModal && (
-               <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-filter backdrop-blur-sm flex justify-center items-center">
-                  <div className="bg-white p-5 rounded-lg shadow-lg">
-                     <h3 className="text-lg font-bold">Thank you for contacting us!</h3>
-                     <p>We will get back to you shortly.</p>
-                     <button onClick={handleCloseModal} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">
+               <div
+                  className="fixed inset-0 z-[100] flex items-center justify-center bg-background/50 p-4 backdrop-blur-md"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="thank-you-title"
+               >
+                  <div className="zog-glass max-w-md rounded-3xl p-8 text-center shadow-glow">
+                     <h3 id="thank-you-title" className="text-xl font-bold text-text">
+                        Thank you for contacting us!
+                     </h3>
+                     <p className="mt-2 text-muted">We will get back to you shortly.</p>
+                     <button
+                        type="button"
+                        onClick={handleCloseModal}
+                        className="zog-btn-primary mt-6 rounded-xl px-8 py-2.5 text-sm font-semibold"
+                     >
                         Close
                      </button>
                   </div>
@@ -177,6 +202,6 @@ const Contact = () => {
          </section>
       </>
    );
-}
+};
 
 export default Contact;
