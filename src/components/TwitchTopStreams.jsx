@@ -7,35 +7,59 @@ import "../assets/styles/twitch.css";
 const TwitchTopStreams = ({ gameId, limit }) => {
     const [twitchTopStreams, setTwitchTopStreams] = useState([]);
     const [selectedStream, setSelectedStream] = useState(null);
+    const [fetchError, setFetchError] = useState(null);
 
     useEffect(() => {
-        fetchTwitchTopStreams(gameId, limit);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps -- mount-only fetch preserves original API usage
-
-    const fetchTwitchTopStreams = async (gameId, limit = 100) => {
-        try {
-            const response = await twitchApi.getTwitchStreams({
-                params: {
-                    game_id: gameId,
-                    first: limit,
-                    sort: "viewers",
-                },
-            });
-            setTwitchTopStreams(response.data.data);
-        } catch (error) {
-            console.error("Error fetching twitch streams:", error);
-        }
-    };
+        const fetchTwitchTopStreams = async () => {
+            setFetchError(null);
+            const first = Math.min(Math.max(1, limit ?? 100), 100);
+            const params = { first };
+            if (gameId) {
+                params.game_id = gameId;
+            }
+            try {
+                const response = await twitchApi.getTwitchStreams({ params });
+                setTwitchTopStreams(response.data.data ?? []);
+            } catch (error) {
+                console.error("Error fetching twitch streams:", error);
+                const status = error.response?.status;
+                const msg =
+                    status === 401
+                        ? "Twitch API rejected the token (401). Generate a new app access token and update VITE_TWITCH_OAUTH_TOKEN in .env."
+                        : status === 403
+                          ? "Twitch API access denied (403). Check your Client ID and token scopes."
+                          : error.response?.data?.message || error.message || "Could not load Twitch streams.";
+                setFetchError(msg);
+                setTwitchTopStreams([]);
+            }
+        };
+        fetchTwitchTopStreams();
+    }, [gameId, limit]);
 
     const handleThumbnailClick = (stream) => {
         setSelectedStream(stream);
     };
+
+    const streamChannel = (stream) => stream.user_login || stream.user_name;
 
     return (
         <div className="pb-4 pt-1">
             <h2 className="zog-section-title">
                 Top 100 Most viewed Live Streams on Twitch
             </h2>
+            {fetchError && (
+                <div
+                    className="mb-4 rounded-xl border border-error/40 bg-error/10 px-4 py-3 text-center text-sm text-error"
+                    role="alert"
+                >
+                    {fetchError}
+                </div>
+            )}
+            {!fetchError && twitchTopStreams.length === 0 && (
+                <p className="mb-4 rounded-xl border border-borderTheme/50 bg-secondary/50 px-6 py-4 text-center text-muted">
+                    No live streams returned from Twitch for this view.
+                </p>
+            )}
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
                 {twitchTopStreams.map((stream) => (
                     <div
@@ -46,7 +70,7 @@ const TwitchTopStreams = ({ gameId, limit }) => {
                             <div className="player-wrapper">
                                 <ReactPlayer
                                     className="react-player"
-                                    url={`https://www.twitch.tv/${stream.user_name}`}
+                                    url={`https://www.twitch.tv/${streamChannel(stream)}`}
                                     width="100%"
                                     height="100%"
                                     controls
@@ -58,7 +82,7 @@ const TwitchTopStreams = ({ gameId, limit }) => {
                                 {stream.thumbnail_url ? (
                                     <img
                                         src={stream.thumbnail_url.replace("{width}", "640").replace("{height}", "360")}
-                                        alt={`Thumbnail for ${stream.user_name}`}
+                                        alt={`Thumbnail for ${streamChannel(stream)}`}
                                         width="100%"
                                         height="100%"
                                         onClick={() => handleThumbnailClick(stream)}
@@ -81,7 +105,7 @@ const TwitchTopStreams = ({ gameId, limit }) => {
                                     type="button"
                                     className="play-button twitch-play-btn"
                                     onClick={() => handleThumbnailClick(stream)}
-                                    aria-label={`Play stream from ${stream.user_name}`}
+                                    aria-label={`Play stream from ${streamChannel(stream)}`}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +121,7 @@ const TwitchTopStreams = ({ gameId, limit }) => {
                             </div>
                         )}
                         <div className="px-5 py-4">
-                            <h3 className="text-lg font-semibold text-text">{stream.user_name}</h3>
+                            <h3 className="text-lg font-semibold text-text">{stream.user_name || stream.user_login}</h3>
                             <p className="mt-1 text-sm text-muted">Viewers: {stream.viewer_count}</p>
                         </div>
                     </div>
