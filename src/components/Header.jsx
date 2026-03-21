@@ -1,13 +1,46 @@
 import { useContext, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { useLocation, Link } from "react-router-dom";
 import _debounce from "debounce";
 import { ThemeContext } from "../context/ThemeContext";
 import whiteLogo from "./../assets/images/zog-logo-white.png";
 import blackLogo from "./../assets/images/zog-logo-black.png";
 import { IoSearchSharp, IoCloseOutline } from "react-icons/io5";
-import { MdLightMode, MdDarkMode } from "react-icons/md";
+import { MdLightMode } from "react-icons/md";
+import { BsMoon } from "react-icons/bs";
 import { FaHome, FaInfoCircle, FaAddressBook } from "react-icons/fa";
 import rawgApi from "../services/rawgApi";
+
+const ThemeToggle = ({ theme, setTheme }) => {
+   const isDark = theme === "dark";
+
+   const handleToggle = () => {
+      const next = isDark ? "light" : "dark";
+      setTheme(next);
+      localStorage.setItem("theme", next);
+   };
+
+   return (
+      <button
+         type="button"
+         aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+         aria-pressed={isDark}
+         onClick={handleToggle}
+         className="inline-flex shrink-0 items-center justify-center rounded-lg p-1.5 text-muted transition-colors hover:bg-accent/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-primary"
+      >
+         {isDark ? (
+            <MdLightMode className="h-4 w-4" aria-hidden />
+         ) : (
+            <BsMoon className="h-4 w-4" aria-hidden />
+         )}
+      </button>
+   );
+};
+
+ThemeToggle.propTypes = {
+   theme: PropTypes.string.isRequired,
+   setTheme: PropTypes.func.isRequired,
+};
 
 const Header = () => {
    const { theme, setTheme } = useContext(ThemeContext);
@@ -98,11 +131,11 @@ const Header = () => {
       `zog-nav-pill ${activeIndex === idx ? "zog-nav-pill-active" : ""}`;
 
    return (
-      <header className="sticky top-0 z-50 border-b border-borderTheme/50 bg-primary/75 backdrop-blur-xl">
-         <div className="flex w-full flex-wrap items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 md:flex-nowrap md:px-5">
+      <header className="sticky top-0 z-50 border-b border-borderTheme/50 bg-primary/75 backdrop-blur-xl md:h-14">
+         <div className="flex w-full flex-wrap items-center gap-2 py-1.5 pl-2 pr-3 sm:gap-2 sm:pl-3 sm:pr-4 md:h-full md:min-h-0 md:flex-nowrap md:gap-2 md:py-0 md:pr-5">
             <a href="/" className="shrink-0 transition-transform duration-200 hover:scale-105">
                <img
-                  className="ml-1 h-10 w-auto object-contain md:h-11"
+                  className="h-8 w-auto object-contain md:h-9"
                   src={logoSrc}
                   width={100}
                   height={50}
@@ -110,13 +143,13 @@ const Header = () => {
                />
             </a>
 
-            <div className="relative order-3 flex min-h-[44px] w-full flex-1 items-center gap-2 rounded-xl border border-borderTheme/60 bg-secondary/60 px-3 py-2 shadow-inner shadow-black/5 backdrop-blur-md md:order-none md:mx-2 md:min-w-0 md:max-w-none md:flex-1 lg:mx-4">
-               <IoSearchSharp className="shrink-0 text-lg text-muted" aria-hidden />
+            <div className="relative order-3 flex h-9 min-h-0 w-full flex-1 items-center gap-1.5 rounded-lg border border-borderTheme/60 bg-secondary/60 px-2.5 py-1 shadow-inner shadow-black/5 backdrop-blur-md md:order-none md:mx-1.5 md:min-w-0 md:max-w-none md:flex-1 lg:mx-3">
+               <IoSearchSharp className="shrink-0 text-base text-muted" aria-hidden />
                <input
                   required
                   type="search"
                   placeholder="Search games…"
-                  className="w-full bg-transparent text-sm text-text outline-none placeholder:text-muted md:text-base"
+                  className="w-full bg-transparent text-sm text-text outline-none placeholder:text-muted"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   aria-label="Search games"
@@ -153,7 +186,7 @@ const Header = () => {
                )}
                <button
                   type="button"
-                  className={`shrink-0 rounded-xl p-2 transition-colors ${
+                  className={`shrink-0 rounded-lg p-1.5 transition-colors ${
                      searchQuery.trim() === "" || filteredGames.length === 0
                         ? "cursor-not-allowed text-muted"
                         : "text-accent hover:bg-accent/10"
@@ -166,7 +199,7 @@ const Header = () => {
                   aria-label="Go to selected game"
                >
                   <svg
-                     className="h-5 w-5"
+                     className="h-4 w-4"
                      xmlns="http://www.w3.org/2000/svg"
                      fill="none"
                      viewBox="0 0 24 24"
@@ -181,12 +214,12 @@ const Header = () => {
             <button
                type="button"
                onClick={() => setOpenMenu(!openMenu)}
-               className="ml-auto inline-flex items-center rounded-xl border border-borderTheme/50 p-2 text-text transition-colors hover:border-accent/40 hover:bg-accent/10 md:hidden"
+               className="ml-auto inline-flex items-center rounded-lg border border-borderTheme/50 p-1.5 text-text transition-colors hover:border-accent/40 hover:bg-accent/10 md:hidden"
                aria-expanded={openMenu}
                aria-label="Open menu"
             >
                <svg
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -218,29 +251,20 @@ const Header = () => {
                      onClick={() => setOpenMenu(false)}
                      aria-current={activeIndex === 0 ? "page" : undefined}
                   >
-                     <FaHome className="text-lg" aria-hidden />
+                     <FaHome className="text-sm" aria-hidden />
                      Home
                   </Link>
                   <Link to="/about" title="About" className={navLinkClass(1)} onClick={() => setOpenMenu(false)}>
-                     <FaInfoCircle className="text-lg" aria-hidden />
+                     <FaInfoCircle className="text-sm" aria-hidden />
                      About
                   </Link>
                   <Link to="/contact" title="Contact" className={navLinkClass(2)} onClick={() => setOpenMenu(false)}>
-                     <FaAddressBook className="text-lg" aria-hidden />
+                     <FaAddressBook className="text-sm" aria-hidden />
                      Contact
                   </Link>
-                  <button
-                     type="button"
-                     onClick={() => {
-                        const newTheme = theme === "light" ? "dark" : "light";
-                        setTheme(newTheme);
-                        localStorage.setItem("theme", newTheme);
-                     }}
-                     className="zog-nav-pill mt-4 justify-center border border-borderTheme/50"
-                  >
-                     {theme === "light" ? <MdDarkMode className="text-xl" /> : <MdLightMode className="text-xl" />}
-                     <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
-                  </button>
+                  <div className="mt-4 flex items-center border-t border-borderTheme pt-4">
+                     <ThemeToggle theme={theme} setTheme={setTheme} />
+                  </div>
                </nav>
             </div>
 
@@ -254,33 +278,24 @@ const Header = () => {
             )}
 
             <nav
-               className="hidden items-center gap-1 md:flex md:shrink-0"
+               className="hidden items-center gap-1.5 md:flex md:shrink-0 md:gap-2"
                aria-label="Main"
             >
                <a href="/" className={navLinkClass(0)} aria-current={activeIndex === 0 ? "page" : undefined}>
-                  <FaHome aria-hidden />
+                  <FaHome className="text-sm" aria-hidden />
                   Home
                </a>
                <a href="/about" className={navLinkClass(1)}>
-                  <FaInfoCircle aria-hidden />
+                  <FaInfoCircle className="text-sm" aria-hidden />
                   About
                </a>
                <a href="/contact" className={navLinkClass(2)}>
-                  <FaAddressBook aria-hidden />
+                  <FaAddressBook className="text-sm" aria-hidden />
                   Contact
                </a>
-               <button
-                  type="button"
-                  onClick={() => {
-                     const newTheme = theme === "light" ? "dark" : "light";
-                     setTheme(newTheme);
-                     localStorage.setItem("theme", newTheme);
-                  }}
-                  className="ml-2 flex h-11 w-11 items-center justify-center rounded-xl border border-borderTheme/50 text-accent transition-all hover:border-accent/50 hover:bg-accent/10 hover:shadow-glow-sm"
-                  aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
-               >
-                  {theme === "light" ? <MdDarkMode className="text-2xl" /> : <MdLightMode className="text-2xl" />}
-               </button>
+               <div className="ml-0.5 flex shrink-0 items-center border-l border-borderTheme/30 pl-2">
+                  <ThemeToggle theme={theme} setTheme={setTheme} />
+               </div>
             </nav>
          </div>
       </header>

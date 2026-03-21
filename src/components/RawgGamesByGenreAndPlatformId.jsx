@@ -24,11 +24,11 @@ const RawgGamesByGenreAndPlatformId = ({
             {platformName} — {genreName} Games
          </h2>
 
-         <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+         <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {gamesList.map((game) => (
                <div
                   key={game.id}
-                  className="group zog-card-interactive relative w-full sm:w-[calc(50%-12px)] md:w-[calc(33.333%-14px)] lg:w-[calc(25%-16px)] xl:w-[calc(20%-16px)]"
+                  className="group zog-card-interactive relative min-w-0 w-full"
                >
                   <Link to={`/games/${game.id}`} className="block overflow-hidden">
                      <img
@@ -43,17 +43,20 @@ const RawgGamesByGenreAndPlatformId = ({
                   <div className="absolute right-2 top-2 flex items-center gap-1 rounded-lg border border-borderTheme/40 bg-background/90 px-2 py-1 text-xs font-bold text-text shadow-md backdrop-blur-sm">
                      <FcRating alt="MetaCritic Rating" /> {game.metacritic}
                   </div>
-                  <div className="px-4 py-4">
+                  <div className="px-3 py-3.5 sm:px-4 sm:py-4">
                      <div className="mb-2 line-clamp-2 text-base font-bold text-text">{game.name}</div>
-                     <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm">
-                        <p className="flex items-center gap-1 text-muted">
-                           <FaStarHalfAlt alt="The number of ratings" /> {game.rating}
+                     <div className="flex flex-nowrap items-center justify-between gap-1.5 text-[0.6875rem] leading-none sm:justify-center sm:gap-2 sm:text-xs md:gap-3">
+                        <p className="flex shrink-0 items-center gap-0.5 tabular-nums text-muted sm:gap-1">
+                           <FaStarHalfAlt className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
+                           <span>{game.rating}</span>
                         </p>
-                        <p className="flex items-center gap-1 text-muted">
-                           <MdRateReview alt="The number of reviews" /> {game.reviews_count}
+                        <p className="flex shrink-0 items-center gap-0.5 tabular-nums text-muted sm:gap-1">
+                           <MdRateReview className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
+                           <span>{game.reviews_count}</span>
                         </p>
-                        <p className="flex items-center gap-1 text-muted">
-                           <FaGripfire alt="Suggestions" /> {game.suggestions_count}
+                        <p className="flex shrink-0 items-center gap-0.5 tabular-nums text-muted sm:gap-1">
+                           <FaGripfire className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
+                           <span>{game.suggestions_count}</span>
                         </p>
                      </div>
                   </div>

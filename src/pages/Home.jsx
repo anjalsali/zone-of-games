@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import rawgApi from "../services/rawgApi";
-
+import useGameGridPageSize from "../hooks/useGameGridPageSize";
 
 import NavigationSidebar from "../components/NavigationSidebar";
 import MainContent from "../components/MainContent";
@@ -25,20 +25,34 @@ const Home = () => {
    const [selectedGenreName, setSelectedGenreName] = useState("");
    const [selectedPlatformName, setSelectedPlatformName] = useState("");
 
+   const gridPageSize = useGameGridPageSize();
+
+   const selectRandomGames = (games, count) => {
+      const n = Math.min(count, games.length);
+      const copy = [...games];
+      const shuffled = copy.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, n);
+   };
+
+   const handleApiError = useCallback((error, errorMessage) => {
+      if (error.response && error.response.status === 404) {
+         setError("No more pages available.");
+      } else {
+         setError(errorMessage);
+      }
+      console.error(`Error: ${errorMessage}`, error);
+   }, []);
+
    useEffect(() => {
       if (allGamesByGenreIdAndPlatformId.length > 0) {
          setRandomGames(selectRandomGames(allGamesByGenreIdAndPlatformId, 10));
       }
    }, [allGamesByGenreIdAndPlatformId]);
 
-   useEffect(() => {
-      fetchGamesAndLists();
-   }, [selectedGenreId, selectedPlatformId, currentPage]); // eslint-disable-line react-hooks/exhaustive-deps -- explicit filter/page triggers only
-
-   const fetchGamesAndLists = async () => {
+   const fetchGamesAndLists = useCallback(async () => {
       try {
          const [gamesResponse, genreListResponse, platformListResponse] = await Promise.all([
-            rawgApi.getGamesByGenreIdAndPlatformId(selectedGenreId, selectedPlatformId, currentPage),
+            rawgApi.getGamesByGenreIdAndPlatformId(selectedGenreId, selectedPlatformId, currentPage, gridPageSize),
             rawgApi.getGenreList,
             rawgApi.getPlatformList,
          ]);
@@ -60,25 +74,13 @@ const Home = () => {
             handleApiError(null, "Page not found");
          }
       } catch (error) {
-         // Handle other errors
          handleApiError(error, "Error fetching data");
       }
-   };
+   }, [selectedGenreId, selectedPlatformId, currentPage, gridPageSize, handleApiError]);
 
-   const handleApiError = (error, errorMessage) => {
-      if (error.response && error.response.status === 404) {
-         // If the error is a 404 (Not Found) status, update the error message
-         setError("No more pages available.");
-      } else {
-         setError(errorMessage);
-      }
-      console.error(`Error: ${errorMessage}`, error);
-   };
-
-   const selectRandomGames = (games, count) => {
-      const shuffled = games.sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, count);
-   };
+   useEffect(() => {
+      fetchGamesAndLists();
+   }, [fetchGamesAndLists]);
 
    const handleShowMore = (setDisplayed, currentCount) => {
       setDisplayed(currentCount + 5);
