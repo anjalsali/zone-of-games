@@ -1,13 +1,46 @@
 import { useContext, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { useLocation, Link } from "react-router-dom";
 import _debounce from "debounce";
 import { ThemeContext } from "../context/ThemeContext";
 import whiteLogo from "./../assets/images/zog-logo-white.png";
 import blackLogo from "./../assets/images/zog-logo-black.png";
 import { IoSearchSharp, IoCloseOutline } from "react-icons/io5";
-import { MdLightMode, MdDarkMode } from "react-icons/md";
+import { MdLightMode } from "react-icons/md";
+import { BsMoon } from "react-icons/bs";
 import { FaHome, FaInfoCircle, FaAddressBook } from "react-icons/fa";
 import rawgApi from "../services/rawgApi";
+
+const ThemeToggle = ({ theme, setTheme }) => {
+   const isDark = theme === "dark";
+
+   const handleToggle = () => {
+      const next = isDark ? "light" : "dark";
+      setTheme(next);
+      localStorage.setItem("theme", next);
+   };
+
+   return (
+      <button
+         type="button"
+         aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+         aria-pressed={isDark}
+         onClick={handleToggle}
+         className="inline-flex shrink-0 items-center justify-center rounded-lg p-1.5 text-muted transition-colors hover:bg-accent/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-primary"
+      >
+         {isDark ? (
+            <MdLightMode className="h-4 w-4" aria-hidden />
+         ) : (
+            <BsMoon className="h-4 w-4" aria-hidden />
+         )}
+      </button>
+   );
+};
+
+ThemeToggle.propTypes = {
+   theme: PropTypes.string.isRequired,
+   setTheme: PropTypes.func.isRequired,
+};
 
 const Header = () => {
    const { theme, setTheme } = useContext(ThemeContext);
@@ -229,18 +262,9 @@ const Header = () => {
                      <FaAddressBook className="text-sm" aria-hidden />
                      Contact
                   </Link>
-                  <button
-                     type="button"
-                     onClick={() => {
-                        const newTheme = theme === "light" ? "dark" : "light";
-                        setTheme(newTheme);
-                        localStorage.setItem("theme", newTheme);
-                     }}
-                     className="zog-nav-pill mt-4 justify-center border border-borderTheme/50"
-                  >
-                     {theme === "light" ? <MdDarkMode className="text-lg" /> : <MdLightMode className="text-lg" />}
-                     <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
-                  </button>
+                  <div className="mt-4 flex items-center border-t border-borderTheme pt-4">
+                     <ThemeToggle theme={theme} setTheme={setTheme} />
+                  </div>
                </nav>
             </div>
 
@@ -254,7 +278,7 @@ const Header = () => {
             )}
 
             <nav
-               className="hidden items-center gap-0.5 md:flex md:shrink-0"
+               className="hidden items-center gap-1.5 md:flex md:shrink-0 md:gap-2"
                aria-label="Main"
             >
                <a href="/" className={navLinkClass(0)} aria-current={activeIndex === 0 ? "page" : undefined}>
@@ -269,18 +293,9 @@ const Header = () => {
                   <FaAddressBook className="text-sm" aria-hidden />
                   Contact
                </a>
-               <button
-                  type="button"
-                  onClick={() => {
-                     const newTheme = theme === "light" ? "dark" : "light";
-                     setTheme(newTheme);
-                     localStorage.setItem("theme", newTheme);
-                  }}
-                  className="ml-1 flex h-8 w-8 items-center justify-center rounded-lg border border-borderTheme/50 text-accent transition-all hover:border-accent/50 hover:bg-accent/10 hover:shadow-glow-sm"
-                  aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
-               >
-                  {theme === "light" ? <MdDarkMode className="text-lg" /> : <MdLightMode className="text-lg" />}
-               </button>
+               <div className="ml-0.5 flex shrink-0 items-center border-l border-borderTheme/30 pl-2">
+                  <ThemeToggle theme={theme} setTheme={setTheme} />
+               </div>
             </nav>
          </div>
       </header>

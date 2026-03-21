@@ -92,14 +92,14 @@ const Contact = () => {
                            src={profile.imgSrc}
                            alt={`${profile.name} profile`}
                         />
-                        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-background via-background/60 to-transparent p-5 opacity-95 transition-opacity duration-300 group-hover:opacity-100">
-                           <div className="mb-4 text-left text-xl font-bold text-text">{profile.name}</div>
+                        <div className="zog-contact-card-overlay absolute inset-0 flex flex-col justify-end p-5 opacity-95 transition-opacity duration-300 group-hover:opacity-100">
+                           <div className="mb-4 text-left text-xl font-bold text-white drop-shadow-sm">{profile.name}</div>
                            <div className="flex gap-4">
                               <a
                                  href={profile.gitHubLink}
                                  target="_blank"
                                  rel="noopener noreferrer"
-                                 className="rounded-lg p-2 text-accent transition-transform hover:scale-110 hover:bg-accent/10"
+                                 className="rounded-lg p-2 text-white/90 transition-transform hover:scale-110 hover:bg-white/10 hover:text-accent"
                                  aria-label={`${profile.name} on GitHub`}
                               >
                                  <FaGithub size={22} />
@@ -108,7 +108,7 @@ const Contact = () => {
                                  href={profile.linkedInLink}
                                  target="_blank"
                                  rel="noopener noreferrer"
-                                 className="rounded-lg p-2 text-accent transition-transform hover:scale-110 hover:bg-accent/10"
+                                 className="rounded-lg p-2 text-white/90 transition-transform hover:scale-110 hover:bg-white/10 hover:text-accent"
                                  aria-label={`${profile.name} on LinkedIn`}
                               >
                                  <FaLinkedin size={22} />
@@ -121,7 +121,7 @@ const Contact = () => {
             </div>
          </div>
 
-         <section className="border-t border-borderTheme/30 bg-primary/20 py-12">
+         <section className="border-t border-borderTheme/30 bg-secondary/40 py-12 dark:bg-primary/20">
             <div className="zog-glass mx-auto max-w-lg rounded-3xl p-8 sm:p-10">
                <h2 className="mb-3 text-center text-3xl font-black text-text">Contact Us</h2>
                <p className="mb-8 text-center text-muted">
