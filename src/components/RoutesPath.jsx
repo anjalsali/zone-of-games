@@ -1,4 +1,5 @@
-import React, { lazy } from "react";
+/* eslint-disable react-refresh/only-export-components -- route table exports lazy page modules */
+import { lazy } from "react";
 
 // Pages
 const Home = lazy(() => import("../pages/Home"));

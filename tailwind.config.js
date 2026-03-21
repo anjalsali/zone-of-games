@@ -32,12 +32,32 @@ export default {
             warn: "rgb(var(--color-warn) / <alpha-value>)",
             error: "rgb(var(--color-error) / <alpha-value>)",
             background: "rgb(var(--color-background) / <alpha-value>)",
+            muted: "rgb(var(--color-muted) / <alpha-value>)",
+            borderTheme: "rgb(var(--color-border) / <alpha-value>)",
             transparent: "transparent",
             current: "currentColor",
             navItemColor: "rgb(var(--color-navColor) / <alpha-value>)",
          },
          fontFamily: {
             montserrat: [`var(--font-montserrat)`, "sans-serif"],
+         },
+         boxShadow: {
+            glow: "0 0 40px -8px rgb(var(--color-accent) / 0.45)",
+            "glow-sm": "0 0 20px -6px rgb(var(--color-accent) / 0.35)",
+         },
+         keyframes: {
+            "zog-fade-up": {
+               "0%": { opacity: "0", transform: "translateY(14px)" },
+               "100%": { opacity: "1", transform: "translateY(0)" },
+            },
+            "zog-shimmer": {
+               "0%": { backgroundPosition: "200% 0" },
+               "100%": { backgroundPosition: "-200% 0" },
+            },
+         },
+         animation: {
+            "fade-up": "zog-fade-up 0.55s ease-out both",
+            shimmer: "zog-shimmer 2.2s ease-in-out infinite",
          },
       },
    },

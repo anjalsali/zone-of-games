@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import _debounce from "debounce";
 import { ThemeContext } from "../context/ThemeContext";
@@ -21,9 +21,7 @@ const Header = () => {
    const [showSuggestions, setShowSuggestions] = useState(false);
    const [selectedSuggestion, setSelectedSuggestion] = useState(0);
 
-
    useEffect(() => {
-      // Determine the active index based on the pathname
       const getActiveIndex = () => {
          switch (location.pathname) {
             case "/":
@@ -36,9 +34,8 @@ const Header = () => {
                return 0;
          }
       };
-      // Set the active index based on the current location
       setActiveIndex(getActiveIndex());
-   }, [location]); // Re-run the effect when the location changes
+   }, [location]);
 
    const fetchGameList = async () => {
       try {
@@ -58,7 +55,7 @@ const Header = () => {
    useEffect(() => {
       debouncedFetchGameList();
       return debouncedFetchGameList.cancel;
-   }, [searchQuery]);
+   }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps -- debounced side effect tied to searchQuery
 
    useEffect(() => {
       const filtered = gameList.filter((game) =>
@@ -97,206 +94,196 @@ const Header = () => {
       }
    };
 
-   return (
-      <div className="flex items-center p-3 border-b-2 border-accent">
-         <a href="/">
-            <img
-               className="hover:scale-125 transition duration-200 ease-in-out ml-1"
-               src={logoSrc}
-               width={100}
-               height={50}
-               alt="Logo image"
-            />
-         </a>
+   const navLinkClass = (idx) =>
+      `zog-nav-pill ${activeIndex === idx ? "zog-nav-pill-active" : ""}`;
 
-         <div className="flex bg-slate-200 p-2 w-screen mx-5 rounded-full items-center relative">
-            <IoSearchSharp />
-            <input
-               required
-               type="text"
-               placeholder="Search Games..."
-               className="px-2 bg-transparent outline-none w-full"
-               value={searchQuery}
-               onChange={handleSearchChange}
-               onKeyDown={(event) => {
-                  handleArrowKeyPress(event);
-                  handleEnterPress(event, filteredGames.length > 0 ? filteredGames[selectedSuggestion].id : "");
-               }}
-            />
-            {showSuggestions && (
-               <div className="absolute top-full left-0 w-3/4 bg-white rounded-xl z-10 mt-2">
-                  {filteredGames.map((game, index) => (
-                     <div
-                        key={game.id}
-                        className={`p-3 border-b border-gray-200 rounded-xl hover:bg-accent cursor-pointer ${index === selectedSuggestion ? "bg-accent text-white" : ""
+   return (
+      <header className="sticky top-0 z-50 border-b border-borderTheme/50 bg-primary/75 backdrop-blur-xl">
+         <div className="flex w-full flex-wrap items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 md:flex-nowrap md:px-5">
+            <a href="/" className="shrink-0 transition-transform duration-200 hover:scale-105">
+               <img
+                  className="ml-1 h-10 w-auto object-contain md:h-11"
+                  src={logoSrc}
+                  width={100}
+                  height={50}
+                  alt="Zone of Games logo"
+               />
+            </a>
+
+            <div className="relative order-3 flex min-h-[44px] w-full flex-1 items-center gap-2 rounded-xl border border-borderTheme/60 bg-secondary/60 px-3 py-2 shadow-inner shadow-black/5 backdrop-blur-md md:order-none md:mx-2 md:min-w-0 md:max-w-none md:flex-1 lg:mx-4">
+               <IoSearchSharp className="shrink-0 text-lg text-muted" aria-hidden />
+               <input
+                  required
+                  type="search"
+                  placeholder="Search games…"
+                  className="w-full bg-transparent text-sm text-text outline-none placeholder:text-muted md:text-base"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  aria-label="Search games"
+                  autoComplete="off"
+                  onKeyDown={(event) => {
+                     handleArrowKeyPress(event);
+                     handleEnterPress(event, filteredGames.length > 0 ? filteredGames[selectedSuggestion].id : "");
+                  }}
+               />
+               {showSuggestions && (
+                  <div
+                     className="absolute left-0 top-[calc(100%+10px)] z-20 max-h-72 w-full overflow-y-auto rounded-2xl border border-borderTheme/60 bg-secondary py-2 shadow-glow backdrop-blur-xl"
+                     role="listbox"
+                  >
+                     {filteredGames.map((game, index) => (
+                        <div
+                           key={game.id}
+                           role="option"
+                           aria-selected={index === selectedSuggestion}
+                           className={`cursor-pointer px-4 py-3 text-sm transition-colors ${
+                              index === selectedSuggestion
+                                 ? "bg-accent/15 text-accent"
+                                 : "text-text hover:bg-primary/80"
                            }`}
-                        onClick={() => {
-                           handleSuggestionClick(game.name);
-                           handleSearchSubmit(game.id);
-                        }}
-                     >
-                        {game.name}
-                     </div>
-                  ))}
-               </div>
-            )}
-            {/* Search button/icon */}
-            <div
-               className={`cursor-pointer ml-2 ${searchQuery.trim() === "" || filteredGames.length === 0 ? "cursor-not-allowed" : ""}`}
-               onClick={(event) => {
-                  event.preventDefault();
-                  handleSearchSubmit(filteredGames.length > 0 ? filteredGames[selectedSuggestion].id : "");
-               }}
+                           onClick={() => {
+                              handleSuggestionClick(game.name);
+                              handleSearchSubmit(game.id);
+                           }}
+                        >
+                           {game.name}
+                        </div>
+                     ))}
+                  </div>
+               )}
+               <button
+                  type="button"
+                  className={`shrink-0 rounded-xl p-2 transition-colors ${
+                     searchQuery.trim() === "" || filteredGames.length === 0
+                        ? "cursor-not-allowed text-muted"
+                        : "text-accent hover:bg-accent/10"
+                  }`}
+                  disabled={searchQuery.trim() === "" || filteredGames.length === 0}
+                  onClick={(event) => {
+                     event.preventDefault();
+                     handleSearchSubmit(filteredGames.length > 0 ? filteredGames[selectedSuggestion].id : "");
+                  }}
+                  aria-label="Go to selected game"
+               >
+                  <svg
+                     className="h-5 w-5"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     strokeWidth="2"
+                  >
+                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+               </button>
+            </div>
+
+            <button
+               type="button"
+               onClick={() => setOpenMenu(!openMenu)}
+               className="ml-auto inline-flex items-center rounded-xl border border-borderTheme/50 p-2 text-text transition-colors hover:border-accent/40 hover:bg-accent/10 md:hidden"
+               aria-expanded={openMenu}
+               aria-label="Open menu"
             >
                <svg
-                  className={`w-6 h-6 text-accent hover:text-accent-dark transition duration-200 ${searchQuery.trim() === "" || filteredGames.length === 0 ? "text-gray-500" : ""}`}
+                  className="h-6 w-6"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth="2"
                >
-                  <path
-                     strokeLinecap="round"
-                     strokeLinejoin="round"
-                     d="M5 12h14M12 5l7 7-7 7"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                </svg>
-            </div>
-         </div>
-         <button
-            onClick={() => setOpenMenu(!openMenu)}
-            className="inline-flex items-center p-2 md:hidden text-text hover:bg-accent hover:text-white rounded-md px-3 py-2 text-sm font-bold cursor-pointer"
-         >
-            <svg
-               className="w-6 h-6"
-               xmlns="http://www.w3.org/2000/svg"
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor"
-               strokeWidth="2"
-            >
-               <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-               />
-            </svg>
-         </button>
-
-         <div
-            className={`fixed rounded-xl top-0 w-max right-0 z-50 py-5 pr-10 dark:bg-primary bg-white shadow-md md:hidden ${openMenu ? "block" : "hidden"
-               }`}
-         >
-            <button
-               onClick={() => setOpenMenu(false)}
-               className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-            >
-               <IoCloseOutline className="text-2xl font-bold" />
             </button>
-            <ul className="space-y-2">
-               <li>
+
+            <div
+               className={`fixed inset-y-0 right-0 z-[60] w-[min(100%,320px)] border-l border-borderTheme/50 bg-primary/95 p-6 shadow-2xl backdrop-blur-2xl transition-transform duration-300 ease-out md:hidden ${
+                  openMenu ? "translate-x-0" : "translate-x-full"
+               }`}
+            >
+               <button
+                  type="button"
+                  onClick={() => setOpenMenu(false)}
+                  className="absolute right-4 top-4 rounded-lg p-2 text-muted hover:bg-secondary hover:text-text"
+                  aria-label="Close menu"
+               >
+                  <IoCloseOutline className="text-2xl" />
+               </button>
+               <nav className="mt-12 flex flex-col gap-2" aria-label="Mobile">
                   <Link
                      to="/"
-                     alt= "Home Page"
-                     title= "Go back home"
-                     className={`flex items-center text-text hover:bg-accent hover:text-white rounded-md px-3 py-2 text-sm font-bold ${activeIndex === 0 ? "border-b-4 border-accent" : ""
-                        }`}
-                     aria-current="page"
+                     title="Home"
+                     className={navLinkClass(0)}
+                     onClick={() => setOpenMenu(false)}
+                     aria-current={activeIndex === 0 ? "page" : undefined}
                   >
-                     <FaHome className="mr-2" />
+                     <FaHome className="text-lg" aria-hidden />
                      Home
                   </Link>
-               </li>
-               <li>
-                  <Link
-                     to="/about"
-                     alt= "About Page"
-                     title="About Page"
-                     className={`flex items-center text-text hover:bg-accent hover:text-white rounded-md px-3 py-2 text-sm font-bold ${activeIndex === 1 ? "border-b-4 border-accent" : ""
-                        }`}
-                  >
-                     <FaInfoCircle className="mr-2" />
+                  <Link to="/about" title="About" className={navLinkClass(1)} onClick={() => setOpenMenu(false)}>
+                     <FaInfoCircle className="text-lg" aria-hidden />
                      About
                   </Link>
-               </li>
-               <li>
-                  <Link
-                     to="/contact"
-                     alt= "Contact Page"
-                     title="Contact Page"
-                     className={`flex items-center text-text hover:bg-accent hover:text-white rounded-md px-3 py-2 text-sm font-bold ${activeIndex === 2 ? "border-b-4 border-accent" : ""
-                        }`}
-                  >
-                     <FaAddressBook className="mr-2" />
+                  <Link to="/contact" title="Contact" className={navLinkClass(2)} onClick={() => setOpenMenu(false)}>
+                     <FaAddressBook className="text-lg" aria-hidden />
                      Contact
                   </Link>
-               </li>
+                  <button
+                     type="button"
+                     onClick={() => {
+                        const newTheme = theme === "light" ? "dark" : "light";
+                        setTheme(newTheme);
+                        localStorage.setItem("theme", newTheme);
+                     }}
+                     className="zog-nav-pill mt-4 justify-center border border-borderTheme/50"
+                  >
+                     {theme === "light" ? <MdDarkMode className="text-xl" /> : <MdLightMode className="text-xl" />}
+                     <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
+                  </button>
+               </nav>
+            </div>
 
+            {openMenu && (
                <button
-                  onClick={() => {
-                     const newTheme = theme === "light" ? "dark" : "light";
-                     setTheme(newTheme);
-                     localStorage.setItem("theme", newTheme);
-                  }}
-                  className="flex items-center bg-slate-200 text-black px-3 py-1 ml-2 rounded-full cursor-pointer"
-               >
-                  {theme === "light" ? (
-                     <MdDarkMode className="text-[25px]" />
-                  ) : (
-                     <MdLightMode className="text-[25px]" />
-                  )}
-                  <span className="text-sm dark:text-black pl-2 font-bold text-text">
-                     {theme === "light" ? "Dark" : "Light"}
-                  </span>
-               </button>
-            </ul>
-         </div>
+                  type="button"
+                  className="fixed inset-0 z-[55] bg-background/40 backdrop-blur-sm md:hidden"
+                  aria-label="Close menu overlay"
+                  onClick={() => setOpenMenu(false)}
+               />
+            )}
 
-         <div className="hidden md:block">
-            <div className="flex space-x-5">
-               <a
-                  href="/"
-                  className={`flex items-center text-text hover:bg-accent hover:text-white rounded-md px-3 py-2 text-sm font-bold ${activeIndex === 0 ? "border-b-4 border-accent" : ""
-                     }`}
-                  aria-current="page"
-               >
-                  <FaHome className="mr-2" />
+            <nav
+               className="hidden items-center gap-1 md:flex md:shrink-0"
+               aria-label="Main"
+            >
+               <a href="/" className={navLinkClass(0)} aria-current={activeIndex === 0 ? "page" : undefined}>
+                  <FaHome aria-hidden />
                   Home
                </a>
-               <a
-                  href="/about"
-                  className={`flex items-center text-text hover:bg-accent hover:text-white rounded-md px-3 py-2 text-sm font-bold ${activeIndex === 1 ? "border-b-4 border-accent" : ""
-                     }`}
-               >
-                  <FaInfoCircle className="mr-2" />
+               <a href="/about" className={navLinkClass(1)}>
+                  <FaInfoCircle aria-hidden />
                   About
                </a>
-               <a
-                  href="/contact"
-                  className={`flex items-center text-text hover:bg-accent hover:text-white rounded-md px-3 py-2 text-sm font-bold ${activeIndex === 2 ? "border-b-4 border-accent" : ""
-                     }`}
-               >
-                  <FaAddressBook className="mr-2" />
+               <a href="/contact" className={navLinkClass(2)}>
+                  <FaAddressBook aria-hidden />
                   Contact
                </a>
                <button
+                  type="button"
                   onClick={() => {
                      const newTheme = theme === "light" ? "dark" : "light";
                      setTheme(newTheme);
                      localStorage.setItem("theme", newTheme);
                   }}
-                  className="bg-slate-200 dark:text-white hover:scale-125 transition duration-200 ease-in-out bg-transparent cursor-pointer"
+                  className="ml-2 flex h-11 w-11 items-center justify-center rounded-xl border border-borderTheme/50 text-accent transition-all hover:border-accent/50 hover:bg-accent/10 hover:shadow-glow-sm"
+                  aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
                >
-                  {theme === "light" ? (
-                     <MdDarkMode className="text-[30px]" />
-                  ) : (
-                     <MdLightMode className="text-[30px] mr-1" />
-                  )}
+                  {theme === "light" ? <MdDarkMode className="text-2xl" /> : <MdLightMode className="text-2xl" />}
                </button>
-            </div>
+            </nav>
          </div>
-      </div>
+      </header>
    );
 };
 

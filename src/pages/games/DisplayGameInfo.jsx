@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 
@@ -80,8 +80,13 @@ const DisplayGameInfo = () => {
    };
 
    const renderLink = (text, href) => (
-      <p className="text-lg">
-         <a className="text-info hover:underline mt-2 hover:text-accent" href={href} target="_blank" rel="noopener noreferrer">
+      <p className="mt-2 text-base md:text-lg">
+         <a
+            className="font-medium text-accent underline-offset-4 transition-colors hover:text-info hover:underline"
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+         >
             {text}
          </a>
       </p>
@@ -126,55 +131,60 @@ const DisplayGameInfo = () => {
 
    if (error) {
       return (
-         <div className="p-5 text-text">
-            <p className="text-xl">Error: {error}</p>
+         <div className="flex justify-center p-6 text-text">
+            <div className="zog-card max-w-lg px-8 py-6 text-center">
+               <p className="text-lg font-semibold text-error">Error: {error}</p>
+            </div>
          </div>
       );
    }
 
    if (!gameData) {
       return (
-         <div className="flex items-center justify-center h-screen">
-            <div role="status">
-               <span className="text-text">Loading....</span>
+         <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 py-16" role="status">
+            <div className="relative h-12 w-12">
+               <span className="absolute inset-0 rounded-full border-2 border-borderTheme/40" />
+               <span className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-accent border-r-accent/40" />
             </div>
+            <span className="text-sm font-medium text-muted">Loading…</span>
          </div>
       );
    }
 
    return (
-      <div className="relative text-text p-5">
-         {/* Background */}
-         <div className="absolute inset-0 overflow-hidden shadow-lg">
-            {/* Background overlay */}
-            <div className="absolute bottom-0 p-5 h-full w-full"></div>
-            {/* Game background image */}
+      <div className="relative overflow-hidden text-text">
+         <div className="pointer-events-none absolute inset-0 -z-10">
             <img
-               className="w-full object-cover rounded-md shadow-lg"
-               style={{ maskImage: "linear-gradient(to bottom, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0))" }}
+               className="h-[min(55vh,480px)] w-full object-cover opacity-40"
+               style={{ maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.9), transparent)" }}
                src={gameData.background_image}
-               alt={gameData.name}
+               alt=""
+               aria-hidden
             />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background" />
          </div>
 
-         <div className="relative flex flex-col items-center mt-20 mb-20">
-            {/* Title, Release Date, and Rating */}
-            <div className="text-center mb-10">
-               <h1 className="text-5xl cursor-pointer hover:scale-125 transition duration-500 ease-in-out font-bold mb-6">{gameData.name}</h1>
-               <p className="text-lg">Released date: {formatReleaseDate(gameData.released)}</p>
-               <p className="text-xl font-bold flex items-center justify-center gap-1 mt-2">
-                  <FaStarHalfAlt alt="The number of ratings" /> {gameData.rating} / {gameData.rating_top}
+         <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 pb-16 pt-12 sm:px-6">
+            <div className="zog-glass mb-12 w-full max-w-3xl rounded-3xl px-6 py-10 text-center shadow-glow-sm">
+               <h1 className="mb-4 bg-gradient-to-r from-text to-accent bg-clip-text text-4xl font-black tracking-tight text-transparent sm:text-5xl">
+                  {gameData.name}
+               </h1>
+               <p className="text-muted">Released {formatReleaseDate(gameData.released)}</p>
+               <p className="mt-3 flex items-center justify-center gap-2 text-lg font-bold text-text">
+                  <FaStarHalfAlt alt="The number of ratings" className="text-accent" /> {gameData.rating} / {gameData.rating_top}
                </p>
             </div>
 
-            {/* Trailer and Description */}
-            <div className="flex flex-col md:flex-row w-full mt-20 mb-20">
-               <div className="md:w-1/2 md:pr-8 mb-16">
-                  <div className="border border-accent rounded-md overflow-hidden mt-4 mb-5">
-                     <img className="w-full hover:scale-110 duration-300 transition ease-in-out object-cover rounded-md" src={gameData.background_image} alt={gameData.name} />
+            <div className="flex w-full flex-col gap-10 md:flex-row md:gap-12">
+               <div className="md:w-1/2">
+                  <div className="zog-card mb-6 overflow-hidden rounded-2xl border-accent/30">
+                     <img
+                        className="w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+                        src={gameData.background_image}
+                        alt={gameData.name}
+                     />
                   </div>
-                  {/* Video Placeholder For Youtube Trailer */}
-                  <div className="border border-accent rounded-md overflow-hidden">
+                  <div className="zog-card overflow-hidden rounded-2xl border-accent/30">
                      <ReactPlayer
                         url={trailerUrl}
                         width="100%"
@@ -187,87 +197,86 @@ const DisplayGameInfo = () => {
                   </div>
                </div>
 
-               <div className="md:w-1/2 md:pl-8">
-                  <div className="mb-6">
-                     <h2 className="text-2xl font-bold mb-4">Game Description</h2>
-                     <p className={`text-lg leading-relaxed ${showFullDescription ? "whitespace-pre-line" : "line-clamp-3"}`}>{gameData.description_raw}</p>
-                     <button className="text-blue-500 hover:underline mt-2" onClick={toggleDescription}>
+               <div className="zog-glass rounded-3xl p-6 md:w-1/2 md:p-8">
+                  <div className="mb-8">
+                     <h2 className="mb-3 text-xl font-bold text-text">Game Description</h2>
+                     <p className={`leading-relaxed text-muted ${showFullDescription ? "whitespace-pre-line" : "line-clamp-3"}`}>
+                        {gameData.description_raw}
+                     </p>
+                     <button
+                        type="button"
+                        className="mt-3 text-sm font-semibold text-accent underline-offset-4 hover:underline"
+                        onClick={toggleDescription}
+                     >
                         {showFullDescription ? "Show Less" : "Show More"}
                      </button>
                   </div>
 
-                  {/* Metacritic Score */}
-                  <div className="flex justify-between mb-6">
-                     <div>
-                        <h3 className="text-2xl font-bold mb-1 flex gap-2 items-center">
-                           <FcRating alt="MetaCritic Rating" /> Metacritic Score: {gameData.metacritic}
-                        </h3>
-                        {renderLink("Metacritic URL", gameData.metacritic)}
-                     </div>
+                  <div className="mb-8">
+                     <h3 className="mb-2 flex items-center gap-2 text-lg font-bold text-text">
+                        <FcRating alt="MetaCritic Rating" /> Metacritic Score: {gameData.metacritic}
+                     </h3>
+                     {renderLink("Metacritic URL", gameData.metacritic)}
                   </div>
 
-                  {/* Additional Links */}
-                  <div className="mb-6">
-                     <h3 className="text-2xl font-bold mb-1 flex gap-2 items-center ">
-                        {" "}
-                        <FaLink />
+                  <div className="mb-8">
+                     <h3 className="mb-2 flex items-center gap-2 text-lg font-bold text-text">
+                        <FaLink className="text-accent" />
                         Additional Links
                      </h3>
                      {renderLink("Game Website", gameData.website)}
                      {renderLink("Reddit", gameData.reddit_url)}
                   </div>
 
-                  {/* Developers */}
-                  <div className="mb-6">
-                     <h3 className="text-2xl font-bold mb-4">Developers</h3>
-                     <div className="flex flex-wrap">
+                  <div className="mb-8">
+                     <h3 className="mb-3 text-lg font-bold text-text">Developers</h3>
+                     <div className="flex flex-wrap gap-2">
                         {gameData.developers.map((dev) => (
-                           <p key={dev.id} className="text-lg mr-4">
+                           <span key={dev.id} className="rounded-lg bg-secondary/80 px-3 py-1 text-sm text-text">
                               {dev.name}
-                           </p>
+                           </span>
                         ))}
                      </div>
                   </div>
 
-                  {/* Genres */}
-                  <div className="mb-6">
-                     <h3 className="text-2xl font-bold mb-4">Genres</h3>
-                     <div className="flex flex-wrap">
+                  <div className="mb-8">
+                     <h3 className="mb-3 text-lg font-bold text-text">Genres</h3>
+                     <div className="flex flex-wrap gap-3">
                         {gameData.genres.map((genre) => (
-                           <div key={genre.id} className="flex items-center mt-2 mr-4">
-                              <img src={genre.image_background} alt={genre.name} className="w-6 h-6 object-cover rounded-lg mr-2" />
-                              <p className="text-lg">{genre.name}</p>
+                           <div key={genre.id} className="flex items-center gap-2 rounded-xl border border-borderTheme/40 bg-secondary/50 px-3 py-2">
+                              <img src={genre.image_background} alt="" className="h-8 w-8 rounded-lg object-cover" />
+                              <p className="text-sm font-medium">{genre.name}</p>
                            </div>
                         ))}
                      </div>
                   </div>
 
-                  {/* Tags */}
-                  <div className="mb-6">
-                     <h3 className="text-2xl font-bold mb-4">Tags</h3>
-                     <div className="flex flex-wrap">
+                  <div className="mb-8">
+                     <h3 className="mb-3 text-lg font-bold text-text">Tags</h3>
+                     <div className="flex flex-wrap gap-2">
                         {gameData.tags.map((tag) => (
-                           <p key={tag.id} className="text-lg mr-4">
+                           <span key={tag.id} className="rounded-full border border-borderTheme/50 px-3 py-1 text-xs font-medium text-muted">
                               {tag.name}
-                           </p>
+                           </span>
                         ))}
                      </div>
                   </div>
 
-                  {/* Platforms */}
-                  <div className="mb-6">
-                     <h3 className="text-2xl font-bold mb-4">Platforms</h3>
-                     <div className="flex flex-wrap">
+                  <div className="mb-4">
+                     <h3 className="mb-3 text-lg font-bold text-text">Platforms</h3>
+                     <div className="flex flex-wrap gap-4 text-2xl text-accent">
                         {gameData.parent_platforms.map((platform, index) => (
-                           <p key={index} className="text-lg mr-4 hover:scale-150 duration-300 ease-in-out">
+                           <span key={index} className="transition-transform duration-200 hover:scale-110">
                               {renderPlatformIcon(platform.platform.name)}
-                           </p>
+                           </span>
                         ))}
                      </div>
                   </div>
                </div>
             </div>
-            <GamePageStreams gameName={gameData.name} />
+            <div className="mt-16 w-full rounded-3xl border border-borderTheme/30 bg-primary/30 p-4 shadow-xl backdrop-blur-sm sm:p-6">
+               <GamePageStreams gameName={gameData.name} />
+            </div>
          </div>
       </div>
    );

@@ -1,5 +1,3 @@
-import React from "react";
-
 const About = () => {
    const techLinks = [
       { href: "https://html.com/", title: "HTML - The Standard Markup Language for Documents", imgSrc: "https://upload.wikimedia.org/wikipedia/commons/8/82/Devicon-html5-plain.svg" },
@@ -59,51 +57,57 @@ const About = () => {
    ];
 
    return (
-      <div className="max-w-4xl mx-auto px-4 py-8 text-center">
-         <section className="mb-10">
-            <h1 className="text-3xl font-bold  mb-4 text-text">Zone of Games</h1>
-            <p className="text-lg text-text">
-               Welcome to <strong>Zone of Games</strong>, the ultimate platform for exploring and discovering video games across all platforms. We bring together a vast collection of games, alongside
-               their live Twitch streams, to offer gamers a unique, interactive experience. Whether you're looking for the latest releases, or classic titles, Zone of Games is your one-stop
+      <div className="mx-auto max-w-4xl px-4 py-10 text-center sm:px-6">
+         <section className="zog-glass animate-fade-up mb-10 rounded-3xl p-8 sm:p-10">
+            <h1 className="mb-4 text-3xl font-black tracking-tight text-text sm:text-4xl">Zone of Games</h1>
+            <p className="text-lg leading-relaxed text-muted">
+               Welcome to <strong className="text-text">Zone of Games</strong>, the ultimate platform for exploring and discovering video games across all platforms. We bring together a vast collection of games, alongside
+               their live Twitch streams, to offer gamers a unique, interactive experience. Whether you&apos;re looking for the latest releases, or classic titles, Zone of Games is your one-stop
                destination.
             </p>
          </section>
 
-         <section className="mb-10 text-center">
-            <h2 className="text-3xl font-bold text-text">Our Vision</h2>
-            <p className="text-lg text-text">
+         <section className="zog-glass mb-10 rounded-3xl p-8 sm:p-10">
+            <h2 className="mb-4 text-2xl font-bold text-text sm:text-3xl">Our Vision</h2>
+            <p className="text-lg leading-relaxed text-muted">
                Our vision is to revolutionise the way gamers discover and engage with video games. By integrating game details with live streaming content, we provide a comprehensive and immersive
-               experience that goes beyond traditional game stores. Zone of Games is not just about purchasing games; it's about becoming part of a vibrant community that shares your passion for
+               experience that goes beyond traditional game stores. Zone of Games is not just about purchasing games; it&apos;s about becoming part of a vibrant community that shares your passion for
                gaming.
             </p>
          </section>
 
-         <div className="container mx-auto px-4 mb-10">
-            <div className="text-center">
-               <h2 className="text-3xl font-bold text-text">Technologies Used</h2>
-            </div>
-            <div className="flex justify-center flex-wrap mt-8 ">
+         <div className="mb-12">
+            <h2 className="zog-section-title">Technologies Used</h2>
+            <div className="flex flex-wrap justify-center gap-4">
                {techLinks.map((tech, index) => (
-                  <div key={index} className="p-2 sm:w-1/4 mb-10 hover:scale-125 transition ease-in-out">
-                     <a href={tech.href} target="_blank" rel="noopener noreferrer" title={tech.title}>
-                        <img width={80} src={tech.imgSrc} alt={tech.title} className="h-20 mx-auto rounded-xl" />
-                     </a>
-                  </div>
+                  <a
+                     key={index}
+                     href={tech.href}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     title={tech.title}
+                     className="zog-card-interactive flex h-28 w-[calc(50%-8px)] items-center justify-center p-4 sm:w-[calc(25%-12px)] md:h-32 md:w-[calc(20%-14px)]"
+                  >
+                     <img width={80} src={tech.imgSrc} alt={tech.title} className="mx-auto max-h-16 w-auto object-contain" />
+                  </a>
                ))}
             </div>
          </div>
 
-         <div className="container mx-auto px-4 mb-5">
-            <div className="text-center">
-               <h2 className="text-3xl font-bold text-text">APIs Used</h2>
-            </div>
-            <div className="flex justify-center flex-wrap mt-8 ">
+         <div>
+            <h2 className="zog-section-title">APIs Used</h2>
+            <div className="flex flex-wrap justify-center gap-6">
                {apiLinks.map((tech, index) => (
-                  <div key={index} className="p-2  md:w-1/6 hover:scale-125 transition duration-200 ease-in-out">
-                     <a href={tech.href} target="_blank" rel="noopener noreferrer" title={tech.title}>
-                        <img width={100} src={tech.imgSrc} alt={tech.title} className="h-20 mx-auto rounded-xl" />
-                     </a>
-                  </div>
+                  <a
+                     key={index}
+                     href={tech.href}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     title={tech.title}
+                     className="group zog-card-interactive flex h-32 w-40 items-center justify-center p-4 sm:w-48"
+                  >
+                     <img width={100} src={tech.imgSrc} alt={tech.title} className="max-h-20 object-contain" />
+                  </a>
                ))}
             </div>
          </div>
