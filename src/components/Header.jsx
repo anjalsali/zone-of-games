@@ -1,15 +1,45 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
-import { useLocation, Link } from "react-router-dom";
-import _debounce from "debounce";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import whiteLogo from "./../assets/images/zog-logo-white.png";
 import blackLogo from "./../assets/images/zog-logo-black.png";
 import { IoSearchSharp, IoCloseOutline } from "react-icons/io5";
 import { MdLightMode } from "react-icons/md";
 import { BsMoon } from "react-icons/bs";
-import { FaHome, FaInfoCircle, FaAddressBook } from "react-icons/fa";
+import { FaHome, FaTwitch, FaInfoCircle, FaAddressBook } from "react-icons/fa";
 import rawgApi from "../services/rawgApi";
+
+const NAV_ITEMS = [
+   { to: "/", key: "home", label: "Home", icon: FaHome, end: true },
+   { to: "/streams/", key: "streams", label: "Live", icon: FaTwitch, end: false },
+   { to: "/about", key: "about", label: "About", icon: FaInfoCircle, end: false },
+   { to: "/contact", key: "contact", label: "Contact", icon: FaAddressBook, end: false },
+];
+
+const MOBILE_DISCOVER_COUNT = 2;
+
+const resolveActiveNavKey = (pathname) => {
+   if (pathname === "/" || pathname === "") {
+      return "home";
+   }
+   if (pathname.startsWith("/games/top")) {
+      return null;
+   }
+   if (pathname === "/streams" || pathname === "/streams/" || pathname.startsWith("/streams/")) {
+      return "streams";
+   }
+   if (pathname === "/about") {
+      return "about";
+   }
+   if (pathname === "/contact" || pathname === "/Contact") {
+      return "contact";
+   }
+   if (pathname.startsWith("/games/")) {
+      return "home";
+   }
+   return null;
+};
 
 const ThemeToggle = ({ theme, setTheme }) => {
    const isDark = theme === "dark";
@@ -26,12 +56,12 @@ const ThemeToggle = ({ theme, setTheme }) => {
          aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
          aria-pressed={isDark}
          onClick={handleToggle}
-         className="inline-flex shrink-0 items-center justify-center rounded-lg p-1.5 text-muted transition-colors hover:bg-accent/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-primary"
+         className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-transparent bg-primary/40 text-muted transition-colors hover:bg-accent/15 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:h-10 md:w-10"
       >
          {isDark ? (
-            <MdLightMode className="h-4 w-4" aria-hidden />
+            <MdLightMode className="h-[18px] w-[18px]" aria-hidden />
          ) : (
-            <BsMoon className="h-4 w-4" aria-hidden />
+            <BsMoon className="h-[18px] w-[18px]" aria-hidden />
          )}
       </button>
    );
@@ -45,256 +75,311 @@ ThemeToggle.propTypes = {
 const Header = () => {
    const { theme, setTheme } = useContext(ThemeContext);
    const logoSrc = theme === "dark" ? whiteLogo : blackLogo;
+   const navigate = useNavigate();
+   const location = useLocation();
+
    const [gameList, setGameList] = useState([]);
    const [openMenu, setOpenMenu] = useState(false);
-   const location = useLocation();
-   const [activeIndex, setActiveIndex] = useState(0);
    const [searchQuery, setSearchQuery] = useState("");
    const [filteredGames, setFilteredGames] = useState([]);
    const [showSuggestions, setShowSuggestions] = useState(false);
    const [selectedSuggestion, setSelectedSuggestion] = useState(0);
 
-   useEffect(() => {
-      const getActiveIndex = () => {
-         switch (location.pathname) {
-            case "/":
-               return 0;
-            case "/about":
-               return 1;
-            case "/contact":
-            case "/Contact":
-               return 2;
-            default:
-               return 0;
-         }
-      };
-      setActiveIndex(getActiveIndex());
-   }, [location]);
+   const activeNavKey = useMemo(() => resolveActiveNavKey(location.pathname), [location.pathname]);
 
-   const fetchGameList = async () => {
-      try {
-         if (searchQuery.trim() !== "") {
-            const response = await rawgApi.getSearchAllGames(searchQuery);
-            setGameList(response?.data?.results || []);
-         } else {
+   useEffect(() => {
+      const q = searchQuery.trim();
+      if (q === "") {
+         setGameList([]);
+         return undefined;
+      }
+      const handle = window.setTimeout(async () => {
+         try {
+            const response = await rawgApi.getSearchAllGames(q);
+            const raw = response?.data?.results;
+            const list = Array.isArray(raw)
+               ? raw.filter((g) => g != null && g.id != null && g.id !== "")
+               : [];
+            setGameList(list);
+         } catch (error) {
+            console.error("Error fetching game list:", error);
             setGameList([]);
          }
-      } catch (error) {
-         console.error("Error fetching game list:", error);
-      }
-   };
-
-   const debouncedFetchGameList = _debounce(fetchGameList, 300);
+      }, 300);
+      return () => window.clearTimeout(handle);
+   }, [searchQuery]);
 
    useEffect(() => {
-      debouncedFetchGameList();
-      return debouncedFetchGameList.cancel;
-   }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps -- debounced side effect tied to searchQuery
-
-   useEffect(() => {
-      const filtered = gameList.filter((game) =>
-         game.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const needle = searchQuery.toLowerCase();
+      const filtered = gameList.filter((game) => {
+         const name = typeof game?.name === "string" ? game.name : "";
+         return name.toLowerCase().includes(needle);
+      });
       setFilteredGames(filtered);
-      setShowSuggestions(searchQuery !== "" && filtered.length > 0);
+      setShowSuggestions(searchQuery.trim() !== "" && filtered.length > 0);
    }, [searchQuery, gameList]);
+
+   useEffect(() => {
+      setSelectedSuggestion(0);
+   }, [searchQuery]);
 
    const handleSearchChange = (event) => {
       setSearchQuery(event.target.value);
    };
 
-   const handleSuggestionClick = (gameName) => {
-      setSearchQuery(gameName);
-      setShowSuggestions(false);
-   };
+   const goToGame = useCallback(
+      (gameId) => {
+         if (!gameId) {
+            return;
+         }
+         navigate(`/games/${gameId}`);
+         setShowSuggestions(false);
+         setOpenMenu(false);
+      },
+      [navigate]
+   );
 
    const handleEnterPress = (event, gameId) => {
       if (event.key === "Enter" && searchQuery.trim() !== "" && filteredGames.length > 0) {
-         window.location.href = `/games/${gameId}`;
+         event.preventDefault();
+         goToGame(gameId);
       }
    };
 
    const handleArrowKeyPress = (event) => {
       if (event.key === "ArrowDown" && selectedSuggestion < filteredGames.length - 1) {
-         setSelectedSuggestion(selectedSuggestion + 1);
+         event.preventDefault();
+         setSelectedSuggestion((i) => i + 1);
       } else if (event.key === "ArrowUp" && selectedSuggestion > 0) {
-         setSelectedSuggestion(selectedSuggestion - 1);
+         event.preventDefault();
+         setSelectedSuggestion((i) => i - 1);
       }
    };
 
    const handleSearchSubmit = (gameId) => {
       if (searchQuery.trim() !== "" && filteredGames.length > 0) {
-         window.location.href = `/games/${gameId}`;
+         goToGame(gameId ?? filteredGames[selectedSuggestion]?.id);
       }
    };
 
-   const navLinkClass = (idx) =>
-      `zog-nav-pill ${activeIndex === idx ? "zog-nav-pill-active" : ""}`;
+   const desktopNavLinkClass = (key) =>
+      `zog-nav-link ${activeNavKey === key ? "zog-nav-link-active" : ""}`;
+
+   const mobileNavLinkClass = (key) =>
+      `zog-nav-pill ${activeNavKey === key ? "zog-nav-pill-active" : ""}`;
 
    return (
-      <header className="sticky top-0 z-50 border-b border-borderTheme/50 bg-primary/75 backdrop-blur-xl md:h-14">
-         <div className="flex w-full flex-wrap items-center gap-2 py-1.5 pl-2 pr-3 sm:gap-2 sm:pl-3 sm:pr-4 md:h-full md:min-h-0 md:flex-nowrap md:gap-2 md:py-0 md:pr-5">
-            <a href="/" className="shrink-0 transition-transform duration-200 hover:scale-105">
+      <header className="zog-nav-shell sticky top-0 z-50 backdrop-blur-xl supports-[backdrop-filter]:bg-primary/70">
+         <div className="relative mx-auto flex w-full max-w-[1920px] flex-wrap items-center gap-2 px-3 py-2.5 sm:px-4 md:flex-nowrap md:gap-3 md:px-5 md:py-0 md:h-[3.75rem]">
+            <Link
+               to="/"
+               className="group flex shrink-0 items-center gap-2.5 rounded-lg outline-none ring-offset-2 ring-offset-primary focus-visible:ring-2 focus-visible:ring-accent sm:gap-3"
+               aria-label="Zone Of Games home"
+            >
                <img
-                  className="h-8 w-auto object-contain md:h-9"
+                  className="h-8 w-auto shrink-0 object-contain transition-transform duration-200 group-hover:scale-[1.03] md:h-9"
                   src={logoSrc}
-                  width={100}
-                  height={50}
-                  alt="Zone of Games logo"
+                  width={120}
+                  height={48}
+                  alt="Zone Of Games"
                />
-            </a>
+               <span className="hidden min-w-0 sm:block">
+                  <span className="block font-black leading-tight tracking-tight text-text sm:text-[1.05rem] md:text-lg">
+                     Zone Of Games
+                  </span>
+               </span>
+            </Link>
 
-            <div className="relative order-3 flex h-9 min-h-0 w-full flex-1 items-center gap-1.5 rounded-lg border border-borderTheme/60 bg-secondary/60 px-2.5 py-1 shadow-inner shadow-black/5 backdrop-blur-md md:order-none md:mx-1.5 md:min-w-0 md:max-w-none md:flex-1 lg:mx-3">
-               <IoSearchSharp className="shrink-0 text-base text-muted" aria-hidden />
-               <input
-                  required
-                  type="search"
-                  placeholder="Search games…"
-                  className="w-full bg-transparent text-sm text-text outline-none placeholder:text-muted"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  aria-label="Search games"
-                  autoComplete="off"
-                  onKeyDown={(event) => {
-                     handleArrowKeyPress(event);
-                     handleEnterPress(event, filteredGames.length > 0 ? filteredGames[selectedSuggestion].id : "");
-                  }}
-               />
+            <div className="relative order-3 flex min-h-[2.5rem] w-full flex-1 items-stretch gap-1.5 rounded-lg zog-nav-search-shell px-2.5 py-1 md:order-none md:mx-2 md:min-w-0 md:max-w-xl md:flex-1 lg:mx-4 lg:max-w-2xl">
+               <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <IoSearchSharp className="shrink-0 text-lg text-accent/80" aria-hidden />
+                  <input
+                     type="search"
+                     placeholder="Search the catalog…"
+                     className="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-text outline-none placeholder:text-muted md:text-[15px]"
+                     value={searchQuery}
+                     onChange={handleSearchChange}
+                     aria-label="Search games"
+                     aria-autocomplete="list"
+                     aria-controls="nav-search-suggestions"
+                     aria-expanded={showSuggestions}
+                     autoComplete="off"
+                     onKeyDown={(event) => {
+                        handleArrowKeyPress(event);
+                        handleEnterPress(
+                           event,
+                           filteredGames.length > 0 ? filteredGames[selectedSuggestion]?.id : ""
+                        );
+                     }}
+                  />
+               </div>
                {showSuggestions && (
                   <div
-                     className="absolute left-0 top-[calc(100%+10px)] z-20 max-h-72 w-full overflow-y-auto rounded-2xl border border-borderTheme/60 bg-secondary py-2 shadow-glow backdrop-blur-xl"
+                     id="nav-search-suggestions"
+                     className="absolute left-0 top-[calc(100%+8px)] z-[70] max-h-80 w-full overflow-y-auto rounded-xl border border-borderTheme/60 bg-primary py-1 shadow-2xl ring-1 ring-black/20"
                      role="listbox"
+                     aria-label="Search suggestions"
                   >
                      {filteredGames.map((game, index) => (
-                        <div
+                        <button
                            key={game.id}
+                           type="button"
                            role="option"
                            aria-selected={index === selectedSuggestion}
-                           className={`cursor-pointer px-4 py-3 text-sm transition-colors ${
+                           className={`flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors ${
                               index === selectedSuggestion
-                                 ? "bg-accent/15 text-accent"
-                                 : "text-text hover:bg-primary/80"
+                                 ? "bg-accent/15 text-text"
+                                 : "text-text/90 hover:bg-secondary/80"
                            }`}
                            onClick={() => {
-                              handleSuggestionClick(game.name);
-                              handleSearchSubmit(game.id);
+                              setSearchQuery(game.name);
+                              goToGame(game.id);
                            }}
                         >
-                           {game.name}
-                        </div>
+                           {game.background_image ? (
+                              <img
+                                 src={game.background_image}
+                                 alt=""
+                                 className="h-10 w-14 shrink-0 rounded-md object-cover"
+                                 width={56}
+                                 height={40}
+                              />
+                           ) : (
+                              <span className="flex h-10 w-14 shrink-0 items-center justify-center rounded-md bg-secondary text-[10px] text-muted">
+                                 —
+                              </span>
+                           )}
+                           <span className="min-w-0 flex-1 truncate font-semibold">
+                              {typeof game.name === "string" ? game.name : "Untitled"}
+                           </span>
+                        </button>
                      ))}
                   </div>
                )}
                <button
                   type="button"
-                  className={`shrink-0 rounded-lg p-1.5 transition-colors ${
+                  className={`shrink-0 self-center rounded-md border border-transparent px-2 py-1.5 transition-colors ${
                      searchQuery.trim() === "" || filteredGames.length === 0
                         ? "cursor-not-allowed text-muted"
-                        : "text-accent hover:bg-accent/10"
+                        : "border-accent/30 bg-accent/15 text-accent hover:bg-accent/25"
                   }`}
                   disabled={searchQuery.trim() === "" || filteredGames.length === 0}
                   onClick={(event) => {
                      event.preventDefault();
-                     handleSearchSubmit(filteredGames.length > 0 ? filteredGames[selectedSuggestion].id : "");
+                     handleSearchSubmit(filteredGames[selectedSuggestion]?.id);
                   }}
-                  aria-label="Go to selected game"
+                  aria-label="Open selected game"
                >
+                  <span className="hidden text-[10px] font-bold uppercase tracking-wider sm:inline">Go</span>
                   <svg
-                     className="h-4 w-4"
+                     className="h-4 w-4 sm:hidden"
                      xmlns="http://www.w3.org/2000/svg"
                      fill="none"
                      viewBox="0 0 24 24"
                      stroke="currentColor"
                      strokeWidth="2"
+                     aria-hidden
                   >
-                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                </button>
             </div>
 
             <button
                type="button"
-               onClick={() => setOpenMenu(!openMenu)}
-               className="ml-auto inline-flex items-center rounded-lg border border-borderTheme/50 p-1.5 text-text transition-colors hover:border-accent/40 hover:bg-accent/10 md:hidden"
+               onClick={() => setOpenMenu((o) => !o)}
+               className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-md border border-borderTheme/55 bg-primary/50 text-text transition-colors hover:border-accent/40 hover:bg-accent/10 md:hidden"
                aria-expanded={openMenu}
-               aria-label="Open menu"
+               aria-controls="zog-mobile-nav"
+               aria-label={openMenu ? "Close menu" : "Open menu"}
             >
-               <svg
-                  className="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-               >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-               </svg>
+               {openMenu ? (
+                  <IoCloseOutline className="h-6 w-6" aria-hidden />
+               ) : (
+                  <svg
+                     className="h-5 w-5"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     strokeWidth="2"
+                     aria-hidden
+                  >
+                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+               )}
             </button>
 
             <div
-               className={`fixed inset-y-0 right-0 z-[60] w-[min(100%,320px)] border-l border-borderTheme/50 bg-primary/95 p-6 shadow-2xl backdrop-blur-2xl transition-transform duration-300 ease-out md:hidden ${
+               id="zog-mobile-nav"
+               className={`fixed inset-y-0 right-0 z-[80] w-[min(100%,340px)] border-l border-borderTheme/60 bg-primary/98 shadow-2xl backdrop-blur-2xl transition-transform duration-300 ease-out md:hidden ${
                   openMenu ? "translate-x-0" : "translate-x-full"
                }`}
+               aria-hidden={!openMenu}
             >
-               <button
-                  type="button"
-                  onClick={() => setOpenMenu(false)}
-                  className="absolute right-4 top-4 rounded-lg p-2 text-muted hover:bg-secondary hover:text-text"
-                  aria-label="Close menu"
-               >
-                  <IoCloseOutline className="text-2xl" />
-               </button>
-               <nav className="mt-12 flex flex-col gap-2" aria-label="Mobile">
-                  <Link
-                     to="/"
-                     title="Home"
-                     className={navLinkClass(0)}
-                     onClick={() => setOpenMenu(false)}
-                     aria-current={activeIndex === 0 ? "page" : undefined}
-                  >
-                     <FaHome className="text-sm" aria-hidden />
-                     Home
-                  </Link>
-                  <Link to="/about" title="About" className={navLinkClass(1)} onClick={() => setOpenMenu(false)}>
-                     <FaInfoCircle className="text-sm" aria-hidden />
-                     About
-                  </Link>
-                  <Link to="/contact" title="Contact" className={navLinkClass(2)} onClick={() => setOpenMenu(false)}>
-                     <FaAddressBook className="text-sm" aria-hidden />
-                     Contact
-                  </Link>
-                  <div className="mt-4 flex items-center border-t border-borderTheme pt-4">
+               <div className="flex h-full flex-col overflow-y-auto px-5 pb-8 pt-6">
+                  <p className="zog-nav-mobile-section">Discover</p>
+                  <nav className="flex flex-col gap-1" aria-label="Mobile primary">
+                     {NAV_ITEMS.slice(0, 3).map(({ to, key, label, icon: Icon }) => (
+                        <Link
+                           key={key}
+                           to={to}
+                           className={mobileNavLinkClass(key)}
+                           onClick={() => setOpenMenu(false)}
+                           aria-current={activeNavKey === key ? "page" : undefined}
+                        >
+                           <Icon className="text-base opacity-90" aria-hidden />
+                           {label}
+                        </Link>
+                     ))}
+                  </nav>
+                  <p className="zog-nav-mobile-section">Site</p>
+                  <nav className="flex flex-col gap-1" aria-label="Mobile secondary">
+                     {NAV_ITEMS.slice(MOBILE_DISCOVER_COUNT).map(({ to, key, label, icon: Icon }) => (
+                        <Link
+                           key={key}
+                           to={to}
+                           className={mobileNavLinkClass(key)}
+                           onClick={() => setOpenMenu(false)}
+                           aria-current={activeNavKey === key ? "page" : undefined}
+                        >
+                           <Icon className="text-base opacity-90" aria-hidden />
+                           {label}
+                        </Link>
+                     ))}
+                  </nav>
+                  <div className="mt-8 flex items-center gap-3 border-t border-borderTheme/50 pt-6">
+                     <span className="text-xs font-semibold uppercase tracking-wider text-muted">Theme</span>
                      <ThemeToggle theme={theme} setTheme={setTheme} />
                   </div>
-               </nav>
+               </div>
             </div>
 
             {openMenu && (
                <button
                   type="button"
-                  className="fixed inset-0 z-[55] bg-background/40 backdrop-blur-sm md:hidden"
-                  aria-label="Close menu overlay"
+                  className="fixed inset-0 z-[75] bg-background/50 backdrop-blur-sm md:hidden"
+                  aria-label="Close menu"
                   onClick={() => setOpenMenu(false)}
                />
             )}
 
             <nav
-               className="hidden items-center gap-1.5 md:flex md:shrink-0 md:gap-2"
-               aria-label="Main"
+               className="hidden items-center gap-0.5 md:flex md:shrink-0 lg:gap-1"
+               aria-label="Main navigation"
             >
-               <a href="/" className={navLinkClass(0)} aria-current={activeIndex === 0 ? "page" : undefined}>
-                  <FaHome className="text-sm" aria-hidden />
-                  Home
-               </a>
-               <a href="/about" className={navLinkClass(1)}>
-                  <FaInfoCircle className="text-sm" aria-hidden />
-                  About
-               </a>
-               <a href="/contact" className={navLinkClass(2)}>
-                  <FaAddressBook className="text-sm" aria-hidden />
-                  Contact
-               </a>
-               <div className="ml-0.5 flex shrink-0 items-center border-l border-borderTheme/30 pl-2">
+               {NAV_ITEMS.map(({ to, key, label, icon: Icon }) => (
+                  <Link
+                     key={key}
+                     to={to}
+                     className={desktopNavLinkClass(key)}
+                     aria-current={activeNavKey === key ? "page" : undefined}
+                  >
+                     <Icon className="h-3.5 w-3.5 opacity-90" aria-hidden />
+                     {label}
+                  </Link>
+               ))}
+               <div className="ml-1 flex shrink-0 items-center border-l border-borderTheme/40 pl-2 lg:ml-2 lg:pl-3">
                   <ThemeToggle theme={theme} setTheme={setTheme} />
                </div>
             </nav>

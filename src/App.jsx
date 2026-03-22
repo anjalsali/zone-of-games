@@ -1,6 +1,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ThemeContext } from "./context/ThemeContext";
+import { BrowseSidebarProvider } from "./context/BrowseSidebarContext";
 import '@fontsource/montserrat';
 
 // Components
@@ -21,25 +22,27 @@ const App = () => {
 
    return (
       <Router>
-         <Routes>
-            {routes.map(({ path, component: Component }) => (
-               <Route
-                  key={path}
-                  path={path}
-                  element={
-                     <ThemeContext.Provider value={{ theme, setTheme }}>
-                        <div className={getThemeClassName()}>
-                           <PageLayout>
-                              <Suspense fallback={<Loading />} >
-                                 <Component />
-                              </Suspense>
-                           </PageLayout>
-                        </div>
-                     </ThemeContext.Provider>
-                  }
-               />
-            ))}
-         </Routes>
+         <ThemeContext.Provider value={{ theme, setTheme }}>
+            <BrowseSidebarProvider>
+               <Routes>
+                  {routes.map(({ path, component: Component }) => (
+                     <Route
+                        key={path}
+                        path={path}
+                        element={
+                           <div className={getThemeClassName()}>
+                              <PageLayout>
+                                 <Suspense fallback={<Loading />}>
+                                    <Component />
+                                 </Suspense>
+                              </PageLayout>
+                           </div>
+                        }
+                     />
+                  ))}
+               </Routes>
+            </BrowseSidebarProvider>
+         </ThemeContext.Provider>
       </Router>
    );
 }

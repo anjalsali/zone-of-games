@@ -5,6 +5,7 @@ import { ScrollMotionContext } from "../context/ScrollMotionContext";
 /**
  * Fades/slides content into view when it crosses the viewport.
  * Direction follows global scroll: scrolling down → enter from below; scrolling up → enter from above.
+ * Default once=true so layout shifts (e.g. images) do not flip isIntersecting off and hide content (opacity 0).
  */
 const ScrollReveal = ({
    as: Component = "div",
@@ -13,7 +14,7 @@ const ScrollReveal = ({
    delay = 0,
    threshold = 0.12,
    rootMargin = "0px 0px -32px 0px",
-   once = false,
+   once = true,
    ...rest
 }) => {
    const ctx = useContext(ScrollMotionContext);

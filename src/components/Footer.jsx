@@ -35,41 +35,43 @@ const Footer = () => {
 
          <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
             <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
-               {/* Brand */}
-               <div className="flex max-w-lg flex-col items-center text-center lg:max-w-sm lg:items-start lg:text-left">
+               {/* Brand: logo + blurb side by side */}
+               <div className="flex w-full max-w-xl flex-row items-start gap-5 sm:gap-6 lg:max-w-2xl lg:shrink-0">
                   <a
                      href="https://zoneofgames.co.uk/"
-                     className="inline-block transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+                     className="shrink-0 self-start transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
                      aria-label="Zone Of Games — official site"
                   >
                      <img
                         src={logoSrc}
-                        className="h-20 w-auto object-contain sm:h-24 md:h-28 lg:h-32"
+                        className="h-16 w-auto object-contain sm:h-20 md:h-24 lg:h-28"
                         alt="Zone Of Games"
                      />
                   </a>
-                  <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
-                     Browse games by genre and platform, explore top-rated titles, and discover live Twitch streams—your
-                     hub for gaming discovery.
-                  </p>
-                  <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 lg:justify-start">
-                     <Link
-                        to="/"
-                        className="text-sm font-semibold text-accent underline-offset-4 transition-colors hover:text-text hover:underline"
-                     >
-                        Home
-                     </Link>
-                     <span className="hidden text-borderTheme sm:inline" aria-hidden>
-                        |
-                     </span>
-                     <a
-                        href="https://zoneofgames.co.uk/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-semibold text-accent underline-offset-4 transition-colors hover:text-text hover:underline"
-                     >
-                        Official site
-                     </a>
+                  <div className="min-w-0 flex-1 pt-0.5 text-left">
+                     <p className="text-sm leading-relaxed text-muted sm:text-[0.9375rem]">
+                        Browse games by genre and platform, explore top-rated titles, and discover live Twitch streams—your
+                        hub for gaming discovery.
+                     </p>
+                     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                        <Link
+                           to="/"
+                           className="text-sm font-semibold text-accent underline-offset-4 transition-colors hover:text-text hover:underline"
+                        >
+                           Home
+                        </Link>
+                        <span className="hidden text-borderTheme sm:inline" aria-hidden>
+                           |
+                        </span>
+                        <a
+                           href="https://zoneofgames.co.uk/"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="text-sm font-semibold text-accent underline-offset-4 transition-colors hover:text-text hover:underline"
+                        >
+                           Official site
+                        </a>
+                     </div>
                   </div>
                </div>
 

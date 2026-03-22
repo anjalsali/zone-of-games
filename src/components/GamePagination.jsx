@@ -10,6 +10,7 @@ const GamePagination = ({
    pageSize,
    onPageChange,
    hasNextPage,
+   resourceName = "games",
 }) => {
    const safeTotal = Math.max(1, totalPages);
    const pageItems = buildPageItems(currentPage, safeTotal);
@@ -40,7 +41,7 @@ const GamePagination = ({
                   <span className="font-semibold text-text">{endIndex.toLocaleString()}</span>
                   {" of "}
                   <span className="font-semibold text-text">{totalCount.toLocaleString()}</span>
-                  {" games · "}
+                  {` ${resourceName} · `}
                </>
             ) : null}
             Page{" "}
@@ -134,6 +135,7 @@ GamePagination.propTypes = {
    pageSize: PropTypes.number.isRequired,
    onPageChange: PropTypes.func.isRequired,
    hasNextPage: PropTypes.bool.isRequired,
+   resourceName: PropTypes.string,
 };
 
 export default GamePagination;

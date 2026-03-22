@@ -1,4 +1,4 @@
-import { forwardRef, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import Loading from "./Loading";
 import GamePagination from "./GamePagination";
@@ -9,29 +9,22 @@ const RawgGamesByGenreAndPlatformId = lazy(() =>
   import("./RawgGamesByGenreAndPlatformId")
 );
 
-const MainContent = forwardRef(
-  (
-    {
-      allGamesByGenreIdAndPlatformId,
-      randomGames,
-      selectedGenreName,
-      selectedPlatformName,
-      currentPage,
-      totalPages,
-      totalCount,
-      pageSize,
-      hasNextPage,
-      onPageChange,
-    },
-    ref
-  ) => {
+const MainContent = ({
+  allGamesByGenreIdAndPlatformId,
+  randomGames,
+  selectedGenreName,
+  selectedPlatformName,
+  currentPage,
+  totalPages,
+  totalCount,
+  pageSize,
+  hasNextPage,
+  onPageChange,
+}) => {
   const bannerGames = Array.isArray(randomGames) ? randomGames : [];
 
   return (
-    <div
-      ref={ref}
-      className="min-w-0 flex-1 border-borderTheme md:self-start md:border-l md:pl-4 lg:pl-5"
-    >
+    <div className="min-w-0 w-full flex-1 md:self-start">
       <ScrollReveal className="min-h-0" delay={80}>
         <div className="py-1 pr-0 sm:pr-1">
           <Suspense fallback={<Loading />}>
@@ -60,10 +53,7 @@ const MainContent = forwardRef(
       </ScrollReveal>
     </div>
   );
-}
-);
-
-MainContent.displayName = "MainContent";
+};
 
 MainContent.propTypes = {
   allGamesByGenreIdAndPlatformId: PropTypes.arrayOf(PropTypes.object).isRequired,

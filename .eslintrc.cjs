@@ -7,14 +7,20 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', 'build', 'node_modules', '.eslintrc.cjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
   plugins: ['react-refresh'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
-      { allowConstantExport: true },
+      { allowConstantExport: true, allowExportNames: ['useBrowseSidebar'] },
     ],
   },
+  overrides: [
+    {
+      files: ['*.config.js', '*.config.cjs', 'postcss.config.js', 'vite.config.js'],
+      env: { node: true },
+    },
+  ],
 }
