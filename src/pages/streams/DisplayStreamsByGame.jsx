@@ -4,9 +4,14 @@ import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import LinksSidebar from "../../components/LinksSidebar";
 import twitchApi from "../../services/twitchApi";
+import useSyncedMainColumnHeight from "../../hooks/useSyncedMainColumnHeight";
 import "../../assets/styles/twitch.css";
 
 const DisplayStreamsByGame = ({ limit }) => {
+    const [mainColumnEl, setMainColumnEl] = useState(null);
+    const mainColumnHeightPx = useSyncedMainColumnHeight(mainColumnEl);
+    const isHeightLocked =
+        typeof mainColumnHeightPx === "number" && mainColumnHeightPx > 0;
     const { gameId } = useParams();
     const [twitchTopStreams, setTwitchTopStreams] = useState([]);
     const [selectedStream, setSelectedStream] = useState(null);
@@ -56,14 +61,25 @@ const DisplayStreamsByGame = ({ limit }) => {
     const streamChannel = (stream) => stream.user_login || stream.user_name;
 
     return (
-        <div className="flex h-full min-h-0 w-full flex-1 flex-col md:flex-row">
-            <aside className="zog-store-sidebar hidden w-[280px] max-w-[min(280px,92vw)] shrink-0 text-text md:flex md:min-h-0 md:flex-col">
-                <div className="flex h-full min-h-0 flex-1 flex-col py-3 pr-2">
+        <div className="flex w-full flex-col md:flex-row md:items-start">
+            <aside
+                className={`zog-store-sidebar hidden w-[min(300px,92vw)] max-w-[min(300px,92vw)] shrink-0 text-text md:flex md:min-h-0 md:flex-col ${
+                    isHeightLocked ? "overflow-hidden" : "md:self-stretch"
+                }`}
+                style={
+                    isHeightLocked
+                        ? { height: mainColumnHeightPx, maxHeight: mainColumnHeightPx }
+                        : undefined
+                }
+            >
+                <div className="flex h-full min-h-0 flex-col py-3 pr-2">
                     <LinksSidebar />
-                    <div className="min-h-0 min-w-0 flex-1" aria-hidden="true" />
                 </div>
             </aside>
-            <div className="min-h-0 min-w-0 flex-1 border-borderTheme md:self-start md:border-l md:pl-4 lg:pl-5">
+            <div
+                ref={setMainColumnEl}
+                className="min-w-0 flex-1 border-borderTheme md:self-start md:border-l md:pl-4 lg:pl-5"
+            >
                 <div className="py-1 pr-0 sm:pr-1">
                     <h2 className="zog-section-title">
                         Most viewed Live Streams on Twitch — {gameName || "…"}

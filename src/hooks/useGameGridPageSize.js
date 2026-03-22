@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 
+const ROWS_PER_PAGE = 5;
+
 /**
  * Matches `RawgGamesByGenreAndPlatformId` grid:
- * 1 / 2 / 3 / 4 columns (md+) → wider cards so stats row fits on one line.
+ * 1 / 2 / 3 / 4 columns (md+) → page size = columns × rows so the grid fills evenly.
  */
 const getGridColumns = () => {
    if (typeof window === "undefined") {
@@ -22,11 +24,11 @@ const getGridColumns = () => {
 };
 
 const useGameGridPageSize = () => {
-   const [pageSize, setPageSize] = useState(() => getGridColumns() * 3);
+   const [pageSize, setPageSize] = useState(() => getGridColumns() * ROWS_PER_PAGE);
 
    useEffect(() => {
       const handleResize = () => {
-         setPageSize(getGridColumns() * 3);
+         setPageSize(getGridColumns() * ROWS_PER_PAGE);
       };
       handleResize();
       window.addEventListener("resize", handleResize);

@@ -5,6 +5,7 @@ import useGameGridPageSize from "../hooks/useGameGridPageSize";
 
 import NavigationSidebar from "../components/NavigationSidebar";
 import MainContent from "../components/MainContent";
+import useSyncedMainColumnHeight from "../hooks/useSyncedMainColumnHeight";
 
 const Home = () => {
    const [allGamesByGenreIdAndPlatformId, setAllGamesByGenreIdAndPlatformId] = useState([]);
@@ -16,11 +17,9 @@ const Home = () => {
    const [currentPage, setCurrentPage] = useState(1);
 
    const [genreList, setGenreList] = useState([]);
-   const [displayedGenres, setDisplayedGenres] = useState(5);
    const [genreActiveIndex, setGenreActiveIndex] = useState(4);
 
    const [platformList, setPlatformList] = useState([]);
-   const [displayedPlatforms, setDisplayedPlatforms] = useState(5);
    const [platformActiveIndex, setPlatformActiveIndex] = useState(4);
 
    const [selectedGenreName, setSelectedGenreName] = useState("");
@@ -30,6 +29,8 @@ const Home = () => {
    const [twitchTopGames, setTwitchTopGames] = useState([]);
    const [selectedOrdering, setSelectedOrdering] = useState("-added");
    const skipScrollRef = useRef(true);
+   const [mainColumnEl, setMainColumnEl] = useState(null);
+   const mainColumnHeightPx = useSyncedMainColumnHeight(mainColumnEl);
 
    const gridPageSize = useGameGridPageSize();
 
@@ -90,7 +91,7 @@ const Home = () => {
             ),
             rawgApi.getGenreList,
             rawgApi.getPlatformList,
-            twitchApi.getTwitchTopGames(5).catch(() => ({ data: { data: [] } })),
+            twitchApi.getTwitchTopGames(12).catch(() => ({ data: { data: [] } })),
          ]);
 
          if (gamesResponse.status === 200 && genreListResponse.status === 200 && platformListResponse.status === 200) {
@@ -119,14 +120,6 @@ const Home = () => {
       fetchGamesAndLists();
    }, [fetchGamesAndLists]);
 
-   const handleShowMore = (setDisplayed, currentCount) => {
-      setDisplayed(currentCount + 5);
-   };
-
-   const handleShowLess = (setDisplayed, currentCount) => {
-      setDisplayed(Math.max(currentCount - 5, 5));
-   };
-
    const handleSelect = (setId, setIndex, id) => {
       setId(id);
       setIndex(id);
@@ -152,28 +145,24 @@ const Home = () => {
    }
 
    return (
-      <div className="flex h-full min-h-0 w-full flex-1 flex-col md:flex-row">
+      <div className="flex w-full flex-col md:flex-row md:items-start">
          {/* Navigation Sidebar — fixed store-standard width on md+ */}
          <NavigationSidebar
             genreList={genreList}
-            displayedGenres={displayedGenres}
             genreActiveIndex={genreActiveIndex}
-            onShowMore={() => handleShowMore(setDisplayedGenres, displayedGenres)}
-            onShowLess={() => handleShowLess(setDisplayedGenres, displayedGenres)}
             onGenreSelect={(genreId) => handleSelect(setSelectedGenreId, setGenreActiveIndex, genreId)}
             platformList={platformList}
-            displayedPlatforms={displayedPlatforms}
             platformActiveIndex={platformActiveIndex}
-            onShowMorePlatforms={() => handleShowMore(setDisplayedPlatforms, displayedPlatforms)}
-            onShowLessPlatforms={() => handleShowLess(setDisplayedPlatforms, displayedPlatforms)}
             onPlatformSelect={(platformId) => handleSelect(setSelectedPlatformId, setPlatformActiveIndex, platformId)}
             twitchTopGames={twitchTopGames}
             selectedOrdering={selectedOrdering}
             onOrderingChange={setSelectedOrdering}
+            mainColumnHeightPx={mainColumnHeightPx}
          />
 
          {/* Main Content */}
          <MainContent
+            ref={setMainColumnEl}
             allGamesByGenreIdAndPlatformId={allGamesByGenreIdAndPlatformId}
             randomGames={randomGames}
             selectedGenreName={selectedGenreName}
