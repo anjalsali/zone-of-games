@@ -62,6 +62,7 @@ const Header = () => {
             case "/about":
                return 1;
             case "/contact":
+            case "/Contact":
                return 2;
             default:
                return 0;

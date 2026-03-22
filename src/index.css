@@ -762,4 +762,38 @@
    .zog-contact-card-overlay {
       background: linear-gradient(to top, rgb(0 0 0 / 0.82) 0%, rgb(0 0 0 / 0.38) 48%, transparent 100%);
    }
+
+   .legal-doc-body section > h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: rgb(var(--color-text));
+   }
+
+   .legal-doc-body section > p,
+   .legal-doc-body section > li {
+      font-size: 0.875rem;
+      line-height: 1.65;
+      color: rgb(var(--color-muted));
+   }
+
+   .legal-doc-body section > ul {
+      margin-top: 0.5rem;
+      list-style-type: disc;
+      padding-left: 1.25rem;
+   }
+
+   .legal-doc-body section > ul > li {
+      margin-top: 0.25rem;
+   }
+
+   .legal-doc-body section a {
+      color: rgb(var(--color-accent));
+      text-decoration: underline;
+      text-underline-offset: 2px;
+   }
+
+   .legal-doc-body section a:hover {
+      color: rgb(var(--color-text));
+   }
 }

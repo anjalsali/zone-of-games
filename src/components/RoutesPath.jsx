@@ -5,6 +5,8 @@ import { lazy } from "react";
 const Home = lazy(() => import("../pages/Home"));
 const About = lazy(() => import("../pages/About"));
 const Contact = lazy(() => import("../pages/Contact"));
+const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
+const Terms = lazy(() => import("../pages/Terms"));
 const TopRatedGames = lazy(() => import("../pages/games/top"));
 const DisplayGameInfo = lazy(() => import("../pages/games/DisplayGameInfo"));
 const TopGamesStreaming = lazy(() => import("../pages/streams"));
@@ -21,7 +23,10 @@ lazy(() => import("../pages/streams/DisplayStreamsByGame"));
 const routes = [
    { path: "/", component: Home },
    { path: "/about", component: About },
+   { path: "/contact", component: Contact },
    { path: "/Contact", component: Contact },
+   { path: "/privacy-policy", component: PrivacyPolicy },
+   { path: "/terms", component: Terms },
    { path: "/games/top", component: TopRatedGames },
    { path: "/games/:gId", component: DisplayGameInfo },
    { path: "/streams/", component: TopGamesStreaming },
