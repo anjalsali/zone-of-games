@@ -11,9 +11,9 @@ function TwitchTopGames() {
 
    const getTwitchTopGames = async () => {
       try {
-         const response = await twitchApi.getTwitchTopGames;
+         const response = await twitchApi.getTwitchTopGames(100);
 
-         setTwitchTopGames(response.data.data);
+         setTwitchTopGames(response.data.data ?? []);
       } catch (error) {
          console.error("Error fetching top games list from Twitch:", error);
       }

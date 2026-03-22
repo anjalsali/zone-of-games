@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import rawgApi from "../services/rawgApi";
+import twitchApi from "../services/twitchApi";
 import useGameGridPageSize from "../hooks/useGameGridPageSize";
 
 import NavigationSidebar from "../components/NavigationSidebar";
@@ -15,17 +16,19 @@ const Home = () => {
    const [currentPage, setCurrentPage] = useState(1);
 
    const [genreList, setGenreList] = useState([]);
-   const [displayedGenres, setDisplayedGenres] = useState(10);
+   const [displayedGenres, setDisplayedGenres] = useState(5);
    const [genreActiveIndex, setGenreActiveIndex] = useState(4);
 
    const [platformList, setPlatformList] = useState([]);
-   const [displayedPlatforms, setDisplayedPlatforms] = useState(10);
+   const [displayedPlatforms, setDisplayedPlatforms] = useState(5);
    const [platformActiveIndex, setPlatformActiveIndex] = useState(4);
 
    const [selectedGenreName, setSelectedGenreName] = useState("");
    const [selectedPlatformName, setSelectedPlatformName] = useState("");
    const [gamesTotalCount, setGamesTotalCount] = useState(0);
    const [gamesHasNextPage, setGamesHasNextPage] = useState(false);
+   const [twitchTopGames, setTwitchTopGames] = useState([]);
+   const [selectedOrdering, setSelectedOrdering] = useState("-added");
    const skipScrollRef = useRef(true);
 
    const gridPageSize = useGameGridPageSize();
@@ -59,7 +62,7 @@ const Home = () => {
 
    useEffect(() => {
       setCurrentPage(1);
-   }, [selectedGenreId, selectedPlatformId]);
+   }, [selectedGenreId, selectedPlatformId, selectedOrdering]);
 
    useEffect(() => {
       if (currentPage > totalPages) {
@@ -77,13 +80,19 @@ const Home = () => {
 
    const fetchGamesAndLists = useCallback(async () => {
       try {
-         const [gamesResponse, genreListResponse, platformListResponse] = await Promise.all([
-            rawgApi.getGamesByGenreIdAndPlatformId(selectedGenreId, selectedPlatformId, currentPage, gridPageSize),
+         const [gamesResponse, genreListResponse, platformListResponse, twitchResponse] = await Promise.all([
+            rawgApi.getGamesByGenreIdAndPlatformId(
+               selectedGenreId,
+               selectedPlatformId,
+               currentPage,
+               gridPageSize,
+               selectedOrdering
+            ),
             rawgApi.getGenreList,
             rawgApi.getPlatformList,
+            twitchApi.getTwitchTopGames(5).catch(() => ({ data: { data: [] } })),
          ]);
 
-         // Check if the response status is okay (200)
          if (gamesResponse.status === 200 && genreListResponse.status === 200 && platformListResponse.status === 200) {
             setError(null);
             setAllGamesByGenreIdAndPlatformId(gamesResponse.data.results);
@@ -91,21 +100,20 @@ const Home = () => {
             setGamesHasNextPage(Boolean(gamesResponse.data.next));
             setGenreList(genreListResponse.data.results);
             setPlatformList(platformListResponse.data.results);
+            setTwitchTopGames(twitchResponse.data?.data ?? []);
 
-            // Get selected genre and platform names
             const selectedGenre = genreListResponse.data.results.find((genre) => genre.id === selectedGenreId);
             const selectedPlatform = platformListResponse.data.results.find((platform) => platform.id === selectedPlatformId);
 
             setSelectedGenreName(selectedGenre ? selectedGenre.name : "");
             setSelectedPlatformName(selectedPlatform ? selectedPlatform.name : "");
          } else {
-            // Handle the case where the page doesn't exist
             handleApiError(null, "Page not found");
          }
       } catch (error) {
          handleApiError(error, "Error fetching data");
       }
-   }, [selectedGenreId, selectedPlatformId, currentPage, gridPageSize, handleApiError]);
+   }, [selectedGenreId, selectedPlatformId, currentPage, gridPageSize, selectedOrdering, handleApiError]);
 
    useEffect(() => {
       fetchGamesAndLists();
@@ -144,7 +152,7 @@ const Home = () => {
    }
 
    return (
-      <div className="flex w-full flex-col md:flex-row md:items-start">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col md:flex-row">
          {/* Navigation Sidebar — fixed store-standard width on md+ */}
          <NavigationSidebar
             genreList={genreList}
@@ -159,6 +167,9 @@ const Home = () => {
             onShowMorePlatforms={() => handleShowMore(setDisplayedPlatforms, displayedPlatforms)}
             onShowLessPlatforms={() => handleShowLess(setDisplayedPlatforms, displayedPlatforms)}
             onPlatformSelect={(platformId) => handleSelect(setSelectedPlatformId, setPlatformActiveIndex, platformId)}
+            twitchTopGames={twitchTopGames}
+            selectedOrdering={selectedOrdering}
+            onOrderingChange={setSelectedOrdering}
          />
 
          {/* Main Content */}

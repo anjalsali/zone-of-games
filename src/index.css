@@ -431,6 +431,158 @@
       margin: 0.75rem 0;
    }
 
+   /* Gaming platform sidebar (Home — full rail) */
+   .zog-store-sidebar {
+      border-right: 1px solid rgb(var(--color-border));
+      background: linear-gradient(
+         185deg,
+         rgb(var(--color-secondary)) 0%,
+         rgb(var(--color-primary) / 0.92) 55%,
+         rgb(var(--color-secondary) / 0.98) 100%
+      );
+      box-shadow: inset -1px 0 0 rgb(0 0 0 / 0.05);
+   }
+
+   .dark .zog-store-sidebar {
+      box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.04);
+   }
+
+   .zog-store-sidebar-header {
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+   }
+
+   .zog-sidebar-section-label {
+      margin-bottom: 0.5rem;
+      font-size: 0.625rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgb(var(--color-muted));
+   }
+
+   .zog-sidebar-divider {
+      height: 1px;
+      margin-left: 0.75rem;
+      margin-right: 0.75rem;
+      background: linear-gradient(90deg, transparent, rgb(var(--color-border) / 0.9), transparent);
+   }
+
+   .zog-sidebar-nav-list {
+      margin: 0;
+      display: flex;
+      list-style: none;
+      flex-direction: column;
+      gap: 3px;
+      padding: 0;
+   }
+
+   .zog-sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.55rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: rgb(var(--color-text) / 0.9);
+      transition:
+         background-color 0.15s ease,
+         border-color 0.15s ease,
+         color 0.15s ease;
+   }
+
+   .zog-sidebar-nav-item:hover {
+      background: rgb(var(--color-primary));
+      color: rgb(var(--color-accent));
+   }
+
+   .zog-sidebar-nav-item-active {
+      border-color: rgb(var(--color-accent) / 0.45);
+      background: rgb(var(--color-accent) / 0.12);
+      color: rgb(var(--color-accent));
+   }
+
+   .zog-sidebar-nav-icon {
+      display: flex;
+      height: 1.75rem;
+      width: 1.75rem;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.35rem;
+      background: rgb(var(--color-primary));
+      font-size: 0.85rem;
+   }
+
+   .zog-sidebar-pill {
+      border-radius: 0.45rem;
+      border: 1px solid rgb(var(--color-border) / 0.65);
+      background: rgb(var(--color-primary) / 0.55);
+      padding: 0.35rem 0.4rem;
+      text-align: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: rgb(var(--color-text) / 0.88);
+      transition:
+         background-color 0.15s ease,
+         border-color 0.15s ease,
+         color 0.15s ease;
+   }
+
+   .zog-sidebar-pill:hover {
+      border-color: rgb(var(--color-accent) / 0.4);
+      color: rgb(var(--color-accent));
+   }
+
+   .zog-sidebar-pill-active {
+      border-color: rgb(var(--color-accent));
+      background: rgb(var(--color-accent) / 0.16);
+      color: rgb(var(--color-accent));
+   }
+
+   .zog-sidebar-search {
+      display: block;
+      width: 100%;
+      border-radius: 0.45rem;
+      border: 1px solid rgb(var(--color-border) / 0.65);
+      background: rgb(var(--color-primary) / 0.55);
+      padding: 0.4rem 0.5rem;
+      font-size: 0.75rem;
+      color: rgb(var(--color-text));
+   }
+
+   .zog-sidebar-search::placeholder {
+      color: rgb(var(--color-muted));
+   }
+
+   .zog-sidebar-search:focus {
+      border-color: rgb(var(--color-accent) / 0.55);
+      outline: none;
+      box-shadow: 0 0 0 2px rgb(var(--color-accent) / 0.15);
+   }
+
+   /* Genre/platform lists: capped height so sidebar stays near main column; inner scroll only */
+   .zog-sidebar-scroll {
+      max-height: min(26vh, 10.5rem);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+   }
+
+   @media (min-width: 1280px) {
+      .zog-sidebar-scroll {
+         max-height: min(22vh, 9.5rem);
+      }
+   }
+
+   .zog-sidebar-panel-scroll {
+      max-height: min(22vh, 9rem);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+   }
+
    /* Team cards: dark scrim so light theme doesn’t wash photos with white */
    .zog-contact-card-overlay {
       background: linear-gradient(to top, rgb(0 0 0 / 0.82) 0%, rgb(0 0 0 / 0.38) 48%, transparent 100%);

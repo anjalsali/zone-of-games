@@ -25,7 +25,7 @@ const CollapsibleSection = ({ title, children, variant = "default" }) => {
             tabIndex={0}
             className={
                isBrowse
-                  ? "mb-0 flex cursor-pointer select-none items-center justify-between gap-2 border-b border-borderTheme py-2.5 pl-1 pr-0 transition-colors hover:bg-primary/40"
+                  ? "mb-0 flex shrink-0 cursor-pointer select-none items-center justify-between gap-2 border-b border-borderTheme py-2.5 pl-1 pr-0 transition-colors hover:bg-primary/40"
                   : "mb-4 flex cursor-pointer select-none items-center justify-between gap-3 rounded-xl px-1 py-2 transition-colors hover:bg-primary/50"
             }
             onClick={handleToggleCollapse}
@@ -52,7 +52,15 @@ const CollapsibleSection = ({ title, children, variant = "default" }) => {
                {isCollapsed ? <FaPlus /> : <FaMinus />}
             </span>
          </div>
-         {!isCollapsed && <div className={isBrowse ? "pt-1" : ""}>{children}</div>}
+         {!isCollapsed && (
+            <div
+               className={
+                  isBrowse ? "flex min-h-0 flex-1 flex-col pt-1" : ""
+               }
+            >
+               {children}
+            </div>
+         )}
       </>
    );
 };

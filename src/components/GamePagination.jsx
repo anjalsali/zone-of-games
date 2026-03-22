@@ -28,7 +28,7 @@ const GamePagination = ({
 
    return (
       <nav
-         className="mt-8 flex w-full flex-col items-center gap-4 pb-6"
+         className="mt-6 flex w-full flex-col items-center gap-3 pb-4"
          aria-label="Pagination"
       >
          <p className="text-center text-xs text-muted sm:text-sm">

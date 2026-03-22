@@ -23,13 +23,27 @@ const getGameData = (gId) => axiosCreateRawgApi.get(
    "/games/" + gId +
    "?key=" + import.meta.env.VITE_RAWG_API_KEY
 );
-const getGamesByGenreIdAndPlatformId = (genreId, platformId, pageNumber, pageSize = 20) => axiosCreateRawgApi.get(
-   "/games?key=" + import.meta.env.VITE_RAWG_API_KEY +
-   "&genres=" + genreId +
-   "&platforms=" + platformId +
-   "&page=" + pageNumber +
-   "&page_size=" + pageSize
-);
+const getGamesByGenreIdAndPlatformId = (
+   genreId,
+   platformId,
+   pageNumber,
+   pageSize = 20,
+   ordering = "-added"
+) =>
+   axiosCreateRawgApi.get(
+      "/games?key=" +
+         import.meta.env.VITE_RAWG_API_KEY +
+         "&genres=" +
+         genreId +
+         "&platforms=" +
+         platformId +
+         "&page=" +
+         pageNumber +
+         "&page_size=" +
+         pageSize +
+         "&ordering=" +
+         encodeURIComponent(ordering)
+   );
 const getGamesByPlatform = (platformId) => axiosCreateRawgApi.get(
    "/games?key=" + import.meta.env.VITE_RAWG_API_KEY +
    "&platforms=" + platformId

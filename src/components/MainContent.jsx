@@ -23,7 +23,7 @@ const MainContent = ({
   const bannerGames = Array.isArray(randomGames) ? randomGames : [];
 
   return (
-    <div className="min-w-0 flex-1 border-borderTheme md:border-l md:pl-4 lg:pl-5">
+    <div className="min-h-0 min-w-0 flex-1 border-borderTheme md:self-start md:border-l md:pl-4 lg:pl-5">
       <div className="py-1 pr-0 sm:pr-1">
         <Suspense fallback={<Loading />}>
           {bannerGames.length > 0 ? (

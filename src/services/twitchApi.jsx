@@ -10,9 +10,9 @@ const axiosCreateTwitchApi = axios.create({
       Authorization: `Bearer ${import.meta.env.VITE_TWITCH_OAUTH_TOKEN}`,
    },
 });
-const getTwitchTopGames = axiosCreateTwitchApi.get(
-   "/games/top"
-);
+/** Top games currently streamed on Twitch (Helix). `first` max 100. */
+const getTwitchTopGames = (first = 20) =>
+   axiosCreateTwitchApi.get("/games/top", { params: { first } });
 const getTwitchStreams = (params) => axiosCreateTwitchApi.get(
    "/streams", params
 );
