@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ScrollReveal from "../components/ScrollReveal";
 
 // Icons
 import { FaGithub, FaLinkedin } from "react-icons/fa";
@@ -75,7 +76,7 @@ const Contact = () => {
 
    return (
       <>
-         <div className="mx-auto max-w-6xl px-4 py-10 text-center sm:px-6">
+         <ScrollReveal className="mx-auto max-w-6xl px-4 py-10 text-center sm:px-6" delay={40}>
             <div className="mb-12">
                <h2 className="mb-4 text-3xl font-black tracking-tight text-text sm:text-4xl">Our Team</h2>
                <p className="mx-auto max-w-3xl text-lg text-muted">
@@ -119,9 +120,13 @@ const Contact = () => {
                   </div>
                ))}
             </div>
-         </div>
+         </ScrollReveal>
 
-         <section className="border-t border-borderTheme/30 bg-secondary/40 py-12 dark:bg-primary/20">
+         <ScrollReveal
+            as="section"
+            className="border-t border-borderTheme/30 bg-secondary/40 py-12 dark:bg-primary/20"
+            delay={80}
+         >
             <div className="zog-glass mx-auto max-w-lg rounded-3xl p-8 sm:p-10">
                <h2 className="mb-3 text-center text-3xl font-black text-text">Contact Us</h2>
                <p className="mb-8 text-center text-muted">
@@ -177,29 +182,29 @@ const Contact = () => {
                   </button>
                </form>
             </div>
-            {showThankYouModal && (
-               <div
-                  className="fixed inset-0 z-[100] flex items-center justify-center bg-background/50 p-4 backdrop-blur-md"
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="thank-you-title"
-               >
-                  <div className="zog-glass max-w-md rounded-3xl p-8 text-center shadow-glow">
-                     <h3 id="thank-you-title" className="text-xl font-bold text-text">
-                        Thank you for contacting us!
-                     </h3>
-                     <p className="mt-2 text-muted">We will get back to you shortly.</p>
-                     <button
-                        type="button"
-                        onClick={handleCloseModal}
-                        className="zog-btn-primary mt-6 rounded-xl px-8 py-2.5 text-sm font-semibold"
-                     >
-                        Close
-                     </button>
-                  </div>
+         </ScrollReveal>
+         {showThankYouModal && (
+            <div
+               className="fixed inset-0 z-[100] flex items-center justify-center bg-background/50 p-4 backdrop-blur-md"
+               role="dialog"
+               aria-modal="true"
+               aria-labelledby="thank-you-title"
+            >
+               <div className="zog-glass max-w-md rounded-3xl p-8 text-center shadow-glow">
+                  <h3 id="thank-you-title" className="text-xl font-bold text-text">
+                     Thank you for contacting us!
+                  </h3>
+                  <p className="mt-2 text-muted">We will get back to you shortly.</p>
+                  <button
+                     type="button"
+                     onClick={handleCloseModal}
+                     className="zog-btn-primary mt-6 rounded-xl px-8 py-2.5 text-sm font-semibold"
+                  >
+                     Close
+                  </button>
                </div>
-            )}
-         </section>
+            </div>
+         )}
       </>
    );
 };

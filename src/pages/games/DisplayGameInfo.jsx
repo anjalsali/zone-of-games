@@ -11,6 +11,7 @@ import { FcRating } from "react-icons/fc";
 
 // Components
 import GamePageStreams from "../../components/GamePageStreams";
+import ScrollReveal from "../../components/ScrollReveal";
 
 // API
 import rawgApi from "../../services/rawgApi";
@@ -131,23 +132,23 @@ const DisplayGameInfo = () => {
 
    if (error) {
       return (
-         <div className="flex justify-center p-6 text-text">
+         <ScrollReveal className="flex justify-center p-6 text-text">
             <div className="zog-card max-w-lg px-8 py-6 text-center">
                <p className="text-lg font-semibold text-error">Error: {error}</p>
             </div>
-         </div>
+         </ScrollReveal>
       );
    }
 
    if (!gameData) {
       return (
-         <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 py-16" role="status">
+         <ScrollReveal className="flex min-h-[50vh] flex-col items-center justify-center gap-4 py-16" role="status">
             <div className="relative h-12 w-12">
                <span className="absolute inset-0 rounded-full border-2 border-borderTheme/40" />
                <span className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-accent border-r-accent/40" />
             </div>
             <span className="text-sm font-medium text-muted">Loading…</span>
-         </div>
+         </ScrollReveal>
       );
    }
 
@@ -165,7 +166,7 @@ const DisplayGameInfo = () => {
          </div>
 
          <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 pb-16 pt-12 sm:px-6">
-            <div className="zog-glass mb-12 w-full max-w-3xl rounded-3xl px-6 py-10 text-center shadow-glow-sm">
+            <ScrollReveal className="zog-glass mb-12 w-full max-w-3xl rounded-3xl px-6 py-10 text-center shadow-glow-sm" delay={40}>
                <h1 className="mb-4 bg-gradient-to-r from-text to-accent bg-clip-text text-4xl font-black tracking-tight text-transparent sm:text-5xl">
                   {gameData.name}
                </h1>
@@ -173,9 +174,9 @@ const DisplayGameInfo = () => {
                <p className="mt-3 flex items-center justify-center gap-2 text-lg font-bold text-text">
                   <FaStarHalfAlt alt="The number of ratings" className="text-accent" /> {gameData.rating} / {gameData.rating_top}
                </p>
-            </div>
+            </ScrollReveal>
 
-            <div className="flex w-full flex-col gap-10 md:flex-row md:gap-12">
+            <ScrollReveal className="flex w-full flex-col gap-10 md:flex-row md:gap-12" delay={70}>
                <div className="md:w-1/2">
                   <div className="zog-card mb-6 overflow-hidden rounded-2xl border-accent/30">
                      <img
@@ -273,10 +274,13 @@ const DisplayGameInfo = () => {
                      </div>
                   </div>
                </div>
-            </div>
-            <div className="mt-16 w-full rounded-3xl border border-borderTheme/30 bg-primary/30 p-4 shadow-xl backdrop-blur-sm sm:p-6">
+            </ScrollReveal>
+            <ScrollReveal
+               className="mt-16 w-full rounded-3xl border border-borderTheme/30 bg-primary/30 p-4 shadow-xl backdrop-blur-sm sm:p-6"
+               delay={50}
+            >
                <GamePageStreams gameName={gameData.name} />
-            </div>
+            </ScrollReveal>
          </div>
       </div>
    );

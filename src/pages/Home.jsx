@@ -5,6 +5,7 @@ import useGameGridPageSize from "../hooks/useGameGridPageSize";
 
 import NavigationSidebar from "../components/NavigationSidebar";
 import MainContent from "../components/MainContent";
+import ScrollReveal from "../components/ScrollReveal";
 import useSyncedMainColumnHeight from "../hooks/useSyncedMainColumnHeight";
 
 const Home = () => {
@@ -131,7 +132,7 @@ const Home = () => {
 
    if (error) {
       return (
-         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 text-center">
+         <ScrollReveal className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 text-center">
             <div className="zog-card max-w-md px-8 py-10">
                <h1 className="mb-3 text-2xl font-bold text-error md:text-3xl">Error: {error}</h1>
                <p className="text-muted">
@@ -140,27 +141,27 @@ const Home = () => {
                   </a>
                </p>
             </div>
-         </div>
+         </ScrollReveal>
       );
    }
 
    return (
       <div className="flex w-full flex-col md:flex-row md:items-start">
-         {/* Navigation Sidebar — fixed store-standard width on md+ */}
-         <NavigationSidebar
-            genreList={genreList}
-            genreActiveIndex={genreActiveIndex}
-            onGenreSelect={(genreId) => handleSelect(setSelectedGenreId, setGenreActiveIndex, genreId)}
-            platformList={platformList}
-            platformActiveIndex={platformActiveIndex}
-            onPlatformSelect={(platformId) => handleSelect(setSelectedPlatformId, setPlatformActiveIndex, platformId)}
-            twitchTopGames={twitchTopGames}
-            selectedOrdering={selectedOrdering}
-            onOrderingChange={setSelectedOrdering}
-            mainColumnHeightPx={mainColumnHeightPx}
-         />
+         <ScrollReveal className="shrink-0 md:flex md:shrink-0" delay={40}>
+            <NavigationSidebar
+               genreList={genreList}
+               genreActiveIndex={genreActiveIndex}
+               onGenreSelect={(genreId) => handleSelect(setSelectedGenreId, setGenreActiveIndex, genreId)}
+               platformList={platformList}
+               platformActiveIndex={platformActiveIndex}
+               onPlatformSelect={(platformId) => handleSelect(setSelectedPlatformId, setPlatformActiveIndex, platformId)}
+               twitchTopGames={twitchTopGames}
+               selectedOrdering={selectedOrdering}
+               onOrderingChange={setSelectedOrdering}
+               mainColumnHeightPx={mainColumnHeightPx}
+            />
+         </ScrollReveal>
 
-         {/* Main Content */}
          <MainContent
             ref={setMainColumnEl}
             allGamesByGenreIdAndPlatformId={allGamesByGenreIdAndPlatformId}

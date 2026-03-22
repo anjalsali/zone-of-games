@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import rawgApi from "../../../services/rawgApi";
 import LinksSidebar from "../../../components/LinksSidebar";
 import RawgTopRatedGames from "../../../components/RawgTopRatedGames";
+import ScrollReveal from "../../../components/ScrollReveal";
 import useSyncedMainColumnHeight from "../../../hooks/useSyncedMainColumnHeight";
 
 const TopRatedGames = () => {
@@ -37,19 +38,19 @@ const TopRatedGames = () => {
                         : undefined
                 }
             >
-                <div className="flex h-full min-h-0 flex-col py-3 pr-2">
+                <ScrollReveal className="flex h-full min-h-0 flex-col py-3 pr-2" delay={40}>
                     <LinksSidebar />
-                </div>
+                </ScrollReveal>
             </aside>
             <div
                 ref={setMainColumnEl}
                 className="min-w-0 flex-1 border-borderTheme md:self-start md:border-l md:pl-4 lg:pl-5"
             >
-                <div className="py-1 pr-0 sm:pr-1">
+                <ScrollReveal className="py-1 pr-0 sm:pr-1" delay={90}>
                     {allGamesList?.length > 0 && (
                         <RawgTopRatedGames gamesList={allGamesList} />
                     )}
-                </div>
+                </ScrollReveal>
             </div>
         </div>
     );

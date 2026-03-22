@@ -2,6 +2,7 @@ import { forwardRef, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import Loading from "./Loading";
 import GamePagination from "./GamePagination";
+import ScrollReveal from "./ScrollReveal";
 
 const GameBanner = lazy(() => import("./GameBanner"));
 const RawgGamesByGenreAndPlatformId = lazy(() =>
@@ -31,30 +32,32 @@ const MainContent = forwardRef(
       ref={ref}
       className="min-w-0 flex-1 border-borderTheme md:self-start md:border-l md:pl-4 lg:pl-5"
     >
-      <div className="py-1 pr-0 sm:pr-1">
-        <Suspense fallback={<Loading />}>
-          {bannerGames.length > 0 ? (
-            <GameBanner randomGames={bannerGames} />
-          ) : (
-            <Loading />
-          )}
+      <ScrollReveal className="min-h-0" delay={80}>
+        <div className="py-1 pr-0 sm:pr-1">
+          <Suspense fallback={<Loading />}>
+            {bannerGames.length > 0 ? (
+              <GameBanner randomGames={bannerGames} />
+            ) : (
+              <Loading />
+            )}
 
-          <RawgGamesByGenreAndPlatformId
-            gamesByGenreAndPlatformList={allGamesByGenreIdAndPlatformId}
-            genreName={selectedGenreName}
-            platformName={selectedPlatformName}
+            <RawgGamesByGenreAndPlatformId
+              gamesByGenreAndPlatformList={allGamesByGenreIdAndPlatformId}
+              genreName={selectedGenreName}
+              platformName={selectedPlatformName}
+            />
+          </Suspense>
+
+          <GamePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalCount={totalCount}
+            pageSize={pageSize}
+            hasNextPage={hasNextPage}
+            onPageChange={onPageChange}
           />
-        </Suspense>
-
-        <GamePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalCount={totalCount}
-          pageSize={pageSize}
-          hasNextPage={hasNextPage}
-          onPageChange={onPageChange}
-        />
-      </div>
+        </div>
+      </ScrollReveal>
     </div>
   );
 }

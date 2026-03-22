@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import ScrollReveal from "../components/ScrollReveal";
 
 const ErrorPage = () => {
     return (
-        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8 px-4 py-16 text-center">
+        <ScrollReveal className="flex min-h-[60vh] flex-col items-center justify-center gap-8 px-4 py-16 text-center">
             <p className="text-[clamp(5rem,18vw,10rem)] font-black leading-none text-accent/25" aria-hidden>
                 404
             </p>
@@ -16,7 +17,7 @@ const ErrorPage = () => {
             >
                 Back to home
             </Link>
-        </div>
+        </ScrollReveal>
     );
 };
 

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ScrollReveal from "../components/ScrollReveal";
 import {
    FaGithub,
    FaGamepad,
@@ -94,7 +95,7 @@ const About = () => {
    return (
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14">
          {/* Hero */}
-         <header className="animate-fade-up relative mb-12 overflow-hidden rounded-3xl border border-borderTheme/50 bg-gradient-to-br from-primary/80 via-secondary/60 to-primary/90 p-8 shadow-lg sm:p-10 md:p-12">
+         <ScrollReveal as="header" className="relative mb-12 overflow-hidden rounded-3xl border border-borderTheme/50 bg-gradient-to-br from-primary/80 via-secondary/60 to-primary/90 p-8 shadow-lg sm:p-10 md:p-12">
             <div
                className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/15 blur-3xl"
                aria-hidden
@@ -137,10 +138,10 @@ const About = () => {
                   Source code
                </a>
             </div>
-         </header>
+         </ScrollReveal>
 
          {/* Mission */}
-         <section className="zog-glass animate-fade-up mb-12 rounded-3xl p-8 sm:p-10" aria-labelledby="about-mission-heading">
+         <ScrollReveal as="section" className="zog-glass mb-12 rounded-3xl p-8 sm:p-10" delay={50} aria-labelledby="about-mission-heading">
             <h2 id="about-mission-heading" className="text-2xl font-bold tracking-tight text-text sm:text-3xl">
                Why this project exists
             </h2>
@@ -161,10 +162,10 @@ const About = () => {
                   and platform exploration, responsive UI, and integrations with industry-standard entertainment APIs.
                </p>
             </div>
-         </section>
+         </ScrollReveal>
 
          {/* Features grid */}
-         <section className="mb-14" aria-labelledby="about-features-heading">
+         <ScrollReveal as="section" className="mb-14" delay={70} aria-labelledby="about-features-heading">
             <h2 id="about-features-heading" className="zog-section-title">
                What you can do
             </h2>
@@ -184,10 +185,10 @@ const About = () => {
                   </div>
                ))}
             </div>
-         </section>
+         </ScrollReveal>
 
          {/* Engineering */}
-         <section className="zog-glass mb-12 rounded-3xl p-8 sm:p-10" aria-labelledby="about-engineering-heading">
+         <ScrollReveal as="section" className="zog-glass mb-12 rounded-3xl p-8 sm:p-10" delay={60} aria-labelledby="about-engineering-heading">
             <div className="mb-6 flex flex-wrap items-center gap-3">
                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/15 text-accent">
                   <FaCodeBranch className="h-5 w-5" aria-hidden />
@@ -237,10 +238,10 @@ const About = () => {
                   </div>
                </li>
             </ul>
-         </section>
+         </ScrollReveal>
 
          {/* Tech stack */}
-         <section className="mb-14" aria-labelledby="about-tech-heading">
+         <ScrollReveal as="section" className="mb-14" delay={50} aria-labelledby="about-tech-heading">
             <h2 id="about-tech-heading" className="zog-section-title">
                Core technologies
             </h2>
@@ -266,10 +267,10 @@ const About = () => {
                   </a>
                ))}
             </div>
-         </section>
+         </ScrollReveal>
 
          {/* APIs */}
-         <section className="mb-14" aria-labelledby="about-api-heading">
+         <ScrollReveal as="section" className="mb-14" delay={60} aria-labelledby="about-api-heading">
             <h2 id="about-api-heading" className="zog-section-title">
                Data &amp; media partners
             </h2>
@@ -290,10 +291,10 @@ const About = () => {
                   </a>
                ))}
             </div>
-         </section>
+         </ScrollReveal>
 
          {/* License & team */}
-         <section className="zog-glass rounded-3xl p-8 sm:p-10" aria-labelledby="about-team-heading">
+         <ScrollReveal as="section" className="zog-glass rounded-3xl p-8 sm:p-10" delay={40} aria-labelledby="about-team-heading">
             <h2 id="about-team-heading" className="text-2xl font-bold tracking-tight text-text sm:text-3xl">
                License, contributors &amp; credits
             </h2>
@@ -320,7 +321,7 @@ const About = () => {
                   View presentation slides
                </a>
             </div>
-         </section>
+         </ScrollReveal>
       </div>
    );
 };
